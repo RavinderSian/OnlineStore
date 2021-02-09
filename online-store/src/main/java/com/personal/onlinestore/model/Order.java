@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@Entity
+@Entity(name = "orders") //order is reserved as a name so changed name to orders
 public class Order {
 
 	@Id

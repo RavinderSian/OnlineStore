@@ -33,6 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
 		if (!categoryOptional.isPresent()) {
 			return Optional.empty();
 		}
+		
 		return categoryOptional;
 	}
 
