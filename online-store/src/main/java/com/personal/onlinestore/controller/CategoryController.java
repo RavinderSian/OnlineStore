@@ -46,7 +46,9 @@ public class CategoryController implements CrudController<Category, Long> {
 
 	@Override
 	public ResponseEntity<?> save(Category category) {
-		return new ResponseEntity<Category>(categoryService.save(category), HttpStatus.OK);
+		
+		Category savedCategory = categoryService.save(category);
+		return new ResponseEntity<Category>(savedCategory, HttpStatus.OK);
 	}
 	
 	@PatchMapping("/updatename/{id}")

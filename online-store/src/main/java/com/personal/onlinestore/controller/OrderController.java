@@ -43,7 +43,8 @@ public class OrderController implements CrudController<Order, Long>{
 
 	@Override
 	public ResponseEntity<?> save(Order order) {
-		return new ResponseEntity<Order>(orderService.save(order), HttpStatus.OK);
+		Order savedOrder = orderService.save(order);
+		return new ResponseEntity<Order>(savedOrder, HttpStatus.OK);
 	}
 	
 }

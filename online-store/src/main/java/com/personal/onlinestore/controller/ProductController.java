@@ -45,7 +45,8 @@ public class ProductController implements CrudController<Product, Long>{
 
 	@Override
 	public ResponseEntity<?> save(Product product) {
-		return new ResponseEntity<Product>(productService.save(product), HttpStatus.OK);
+		Product savedProduct = productService.save(product);
+		return new ResponseEntity<Product>(savedProduct, HttpStatus.OK);
 	}
 	
 	@PatchMapping("/updatename/{id}")
