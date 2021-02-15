@@ -26,5 +26,8 @@ public class Customer {
 	
 	@Column(name = "credit_card_number")
 	private String cardNumber;
+	
+	@Column(name = "post_code")
+	private String postCode;
 
 }
