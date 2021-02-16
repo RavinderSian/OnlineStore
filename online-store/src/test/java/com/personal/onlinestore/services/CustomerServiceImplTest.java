@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.personal.onlinestore.model.Customer;
+import com.personal.onlinestore.model.CustomerDTO;
 import com.personal.onlinestore.repository.CustomerRepository;
 
 @SpringBootTest
@@ -38,29 +39,41 @@ class CustomerServiceImplTest {
 	}
 	
 	@Test
-	public void test_Save_CallsRepositorySave_WhenCalled() {
+	public void test_SaveAndReturnCustomerDTO_CallsRepositorySave_WhenCalled() {
+		//Arrange		
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("test");
+		customer.setLastName("testing");
+		when(mockRepository.save(customer)).thenReturn(customer);
 		//Act
-		customerService.save(mockCustomer);
+		customerService.saveAndReturnCustomerDTO(customer);
 		//Assert
-		verify(mockRepository, times(1)).save(mockCustomer);
+		verify(mockRepository, times(1)).save(customer);
 	}
 	
 	@Test
-	public void test_Save_ReturnsCorrectCustomer_WhenGivenCustomerMock() {
+	public void test_SaveAndReturnCustomerDTO_ReturnsCorrectCustomerDTO_WhenGivenCustomer() {
 		//Arrange
-		when(mockRepository.save(mockCustomer)).thenReturn(mockCustomer);
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("test");
+		customer.setLastName("testing");
+		when(mockRepository.save(customer)).thenReturn(customer);
 		//Act
-		Customer savedCustomer = customerService.save(mockCustomer);
+		CustomerDTO savedCustomerDTO = customerService.saveAndReturnCustomerDTO(customer);
 		//Assert
-		assertEquals(savedCustomer, mockCustomer);
+		assertEquals(savedCustomerDTO.getCustomerId(), customer.getCustomerId());
+		assertEquals(savedCustomerDTO.getFirstName(), customer.getFirstName());
+		assertEquals(savedCustomerDTO.getLastName(), customer.getLastName());
 	}
 	
 	@Test
-	public void test_Delete_CallsRepositoryDelete_WhenCalled() {
+	public void test_DeleteById_CallsRepositoryDeleteById_WhenCalled() {
 		//Act
-		customerService.delete(mockCustomer);
+		customerService.deleteById(1L);
 		//Assert
-		verify(mockRepository, times(1)).delete(mockCustomer);
+		verify(mockRepository, times(1)).deleteById(1L);
 	}
 	
 	@Test
@@ -72,32 +85,48 @@ class CustomerServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindById_ReturnsCorrectCustomerOptional_WhenCalledWithId1() {
+	public void test_FindById_ReturnsCorrectCustomerDTOOptional_WhenCalledWithId1() {
 		//Arrange
-		when(mockRepository.findById(1L)).thenReturn(Optional.of(mockCustomer));
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("test");
+		customer.setLastName("testing");
+		when(mockRepository.findById(1L)).thenReturn(Optional.of(customer));
 		//Act
-		Optional<Customer> customerOptional = customerService.findById(1L);
+		Optional<CustomerDTO> customerDTOOptional = customerService.findById(1L);
 		//Assert
-		assertEquals(customerOptional, Optional.of(mockCustomer));
+		assertEquals(customerDTOOptional.get().getCustomerId(), customer.getCustomerId());
+		assertEquals(customerDTOOptional.get().getFirstName(), customer.getFirstName());
+		assertEquals(customerDTOOptional.get().getLastName(), customer.getLastName());
 	}
 	
 	@Test
 	public void test_FindById_ReturnsEmptyOptional_WhenCalledWithId10() {
 		//Act
-		Optional<Customer> customerOptional = customerService.findById(10L);
+		Optional<CustomerDTO> customerDTOOptional = customerService.findById(10L);
 		//Assert
-		assertEquals(customerOptional, Optional.empty());
+		assertEquals(customerDTOOptional, Optional.empty());
 	}
 	
 	@Test
-	public void test_UpdateFirstName_ReturnsCustomerWithFirstNameTest_WhenGivenCustomerWithFirstNameTest() {
+	public void test_saveCustomerByDTO_ReturnsCustomerDTOWithFirstNameTest_WhenGivenCustomerDTOWithFirstNameTest() {
 		//Arrange
+		
 		Customer customer = new Customer();
-		customer.setFirstName("testing");
+		customer.setCustomerId(1L);
+		customer.setFirstName("test");
+		customer.setLastName("testing");
+		when(mockRepository.save(customer)).thenReturn(customer);
+		
+		CustomerDTO customerDTO = new CustomerDTO();
+		customerDTO.setCustomerId(1L);
+		customerDTO.setFirstName("test");
+		customerDTO.setLastName("testing");
+		
 		//Act
-		customerService.updateFirstName(customer, "test");
+		CustomerDTO updatedCustomerDTO = customerService.saveCustomerByDTO(1L, customerDTO);
 		//Assert
-		assertEquals("test", customer.getFirstName());
+		assertEquals(customerDTO, updatedCustomerDTO);
 	}
 
 }

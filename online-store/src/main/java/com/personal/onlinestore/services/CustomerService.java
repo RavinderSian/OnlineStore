@@ -1,9 +1,15 @@
 package com.personal.onlinestore.services;
 
-import com.personal.onlinestore.model.Customer;
+import java.util.Optional;
 
-public interface CustomerService extends CrudService<Customer, Long> {
+import com.personal.onlinestore.model.Customer;
+import com.personal.onlinestore.model.CustomerDTO;
+
+public interface CustomerService {
 	
-	Customer updateFirstName(Customer customer, String firstName);
+	CustomerDTO saveAndReturnCustomerDTO(Customer customer);
+	void deleteById(Long id);
+	Optional<CustomerDTO> findById(Long id);
+	CustomerDTO saveCustomerByDTO(Long id, CustomerDTO customerDTO);
 
 }
