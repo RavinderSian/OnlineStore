@@ -45,6 +45,7 @@ class CustomerServiceImplTest {
 		customer.setCustomerId(1L);
 		customer.setFirstName("test");
 		customer.setLastName("testing");
+		customer.setCardNumber("1");
 		when(mockRepository.save(customer)).thenReturn(customer);
 		//Act
 		customerService.saveAndReturnCustomerDTO(customer);
@@ -59,6 +60,7 @@ class CustomerServiceImplTest {
 		customer.setCustomerId(1L);
 		customer.setFirstName("test");
 		customer.setLastName("testing");
+		customer.setCardNumber("1");
 		when(mockRepository.save(customer)).thenReturn(customer);
 		//Act
 		CustomerDTO savedCustomerDTO = customerService.saveAndReturnCustomerDTO(customer);
@@ -91,6 +93,7 @@ class CustomerServiceImplTest {
 		customer.setCustomerId(1L);
 		customer.setFirstName("test");
 		customer.setLastName("testing");
+		customer.setCardNumber("1");
 		when(mockRepository.findById(1L)).thenReturn(Optional.of(customer));
 		//Act
 		Optional<CustomerDTO> customerDTOOptional = customerService.findById(1L);
