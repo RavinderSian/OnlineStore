@@ -51,8 +51,8 @@ public class CustomerController implements CrudController<Customer, Long>{
 	}
 	
 	@PutMapping("/{id}/update")
-	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CustomerDTO customerDTO){
-		CustomerDTO updatedCustomerDTO = customerService.saveCustomerByDTO(id, customerDTO);
+	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Customer customer){
+		CustomerDTO updatedCustomerDTO = customerService.updateCustomerByCustomer(id, customer);
 		return new ResponseEntity<CustomerDTO>(updatedCustomerDTO, HttpStatus.OK);
 	}
 	

@@ -45,12 +45,14 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public CustomerDTO saveCustomerByDTO(Long id, CustomerDTO customerDTO) {
+	public CustomerDTO updateCustomerByCustomer(Long id, Customer customer) {
 		
-		Customer customer = mapper.map(customerDTO, Customer.class);
 		customer.setCustomerId(id);
 		
-		return saveAndReturnCustomerDTO(customer);
+		Customer savedCustomer = repository.save(customer);
+		
+		return mapper.map(savedCustomer, CustomerDTO.class);
+		
 	}
 
 }

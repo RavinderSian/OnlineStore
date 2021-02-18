@@ -1,5 +1,7 @@
 package com.personal.onlinestore.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,6 @@ public interface CrudController <T, ID> {
 	ResponseEntity<String> deleteById(@PathVariable ID id);
 	
 	@PostMapping("/save")
-	ResponseEntity<?> save(@RequestBody T t);
+	ResponseEntity<?> save(@RequestBody @Valid T t);
 	
 }

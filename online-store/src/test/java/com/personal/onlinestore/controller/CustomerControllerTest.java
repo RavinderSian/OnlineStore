@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.personal.onlinestore.model.Category;
 import com.personal.onlinestore.model.Customer;
 import com.personal.onlinestore.model.CustomerDTO;
 import com.personal.onlinestore.repository.CustomerRepository;
