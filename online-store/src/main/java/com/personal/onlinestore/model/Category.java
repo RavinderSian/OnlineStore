@@ -12,9 +12,11 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotEmpty;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
+@EqualsAndHashCode(exclude = "products")
 @NoArgsConstructor
 @Entity
 public class Category {

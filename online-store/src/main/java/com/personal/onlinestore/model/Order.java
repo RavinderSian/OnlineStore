@@ -15,9 +15,11 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.CreationTimestamp;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
+@EqualsAndHashCode(exclude = {"products", "customer"})
 @NoArgsConstructor
 @Entity(name = "orders") //order is reserved as a name so changed name to orders
 public class Order {
