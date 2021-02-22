@@ -37,4 +37,7 @@ public class Product {
 	@JoinColumn(name = "category_id")
 	private Category category;
 	
+	@ManyToOne
+	@JoinColumn(name = "order_id")
+	private Order order;
 }

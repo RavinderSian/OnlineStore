@@ -2,6 +2,7 @@ package com.personal.onlinestore.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,6 +19,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.personal.onlinestore.model.Category;
+import com.personal.onlinestore.model.Product;
 import com.personal.onlinestore.repository.CategoryRepository;
 
 @SpringBootTest
@@ -77,6 +79,21 @@ class CategoryServiceImplTest {
 		categoryService.delete(mockCategory);
 		//Assert
 		verify(mockRepository, times(1)).delete(mockCategory);
+	}
+	
+	@Test
+	public void test_CategoryServiceDelete_ClearsBothSidesOfMapping_WhenDeletingCategory() {
+		//Arrange
+		Category category = new Category();
+		category.setName("test");
+		Product product = new Product();
+		category.addProduct(product);
+		product.setCategory(category);
+		//Act
+		categoryService.delete(category);
+		//Assert
+		assertNull(product.getCategory());
+		assertEquals(category.getProducts().size(), 0);
 	}
 	
 	@Test

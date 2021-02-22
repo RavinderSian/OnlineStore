@@ -1,5 +1,6 @@
 package com.personal.onlinestore.services;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -23,6 +24,9 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public void delete(Order order) {
+		order.getProducts().forEach(product -> product.setOrder(null));
+		order.setProducts(new ArrayList<>());
+		order.setCustomer(null);
 		repository.delete(order);
 
 	}

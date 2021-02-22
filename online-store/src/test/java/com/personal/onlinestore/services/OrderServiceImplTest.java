@@ -2,6 +2,7 @@ package com.personal.onlinestore.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,7 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.personal.onlinestore.model.Customer;
 import com.personal.onlinestore.model.Order;
+import com.personal.onlinestore.model.Product;
 import com.personal.onlinestore.repository.OrderRepository;
 
 @SpringBootTest
@@ -61,6 +64,33 @@ class OrderServiceImplTest {
 		orderService.delete(mockOrder);
 		//Assert
 		verify(mockRepository, times(1)).delete(mockOrder);
+	}
+	
+	@Test
+	public void test_OrderServiceDelete_ClearsBothSidesOfOrderCustomerMapping_WhenDeletingOrder() {
+		//Arrange
+		Order order = new Order();
+		Customer customer = new Customer();
+		order.setCustomer(customer);
+		customer.addOrder(order);
+		//Act
+		orderService.delete(order);
+		//Assert
+		assertNull(order.getCustomer());
+	}
+	
+	@Test
+	public void test_OrderServiceDelete_ClearsBothSidesOfMapping_WhenDeletingOrder() {
+		//Arrange
+		Order order = new Order();
+		Product product = new Product();
+		order.addProduct(product);
+		product.setOrder(order);
+		//Act
+		orderService.delete(order);
+		//Assert
+		assertNull(product.getOrder());
+		assertEquals(order.getProducts().size(), 0);
 	}
 	
 	@Test
