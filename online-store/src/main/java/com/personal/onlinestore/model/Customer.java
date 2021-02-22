@@ -36,5 +36,4 @@ public class Customer {
 	@NotEmpty(message = "Please enter a valid post code")
 	@Column(name = "post_code")
 	private String postCode;
-
 }

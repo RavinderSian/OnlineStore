@@ -77,7 +77,7 @@ class ProductControllerTest {
 	}
 	
 	@Test
-	public void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenValidCategory() throws Exception {
+	public void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenValidProduct() throws Exception {
 		
 		Product product = new Product();
 		product.setProductId(1L);
@@ -93,6 +93,22 @@ class ProductControllerTest {
 		this.mockMvc.perform(post("/product/save").contentType(APPLICATION_JSON_UTF8).content(requestJson))
 		.andExpect(status().isOk())
 		.andExpect(content().json("{'productId':1, 'name':'test'}"));
+	}
+	
+	@Test
+	public void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenInvalidProduct() throws Exception {
+		
+		Product product = new Product();
+		product.setProductId(1L);
+				
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(product);
+		
+		this.mockMvc.perform(post("/product/save").contentType(APPLICATION_JSON_UTF8).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().json("{\"name\":\"Please enter a valid product name\"}"));
 	}
 	
 	@Test

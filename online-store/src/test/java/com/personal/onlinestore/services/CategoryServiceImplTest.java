@@ -8,6 +8,10 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -26,15 +30,27 @@ class CategoryServiceImplTest {
 	
 	@Mock
 	Category mockCategory;
+	
+	private Validator validator;
 
 	@BeforeEach
 	void setUp() throws Exception {
 		categoryService = new CategoryServiceImpl(mockRepository);
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		validator = factory.getValidator();
 	}
 
 	@Test
 	public void test_CategoryService_IsNotNull() {
 		assertNotNull(categoryService);
+	}
+	
+	@Test
+	public void test_FieldValidation_GivesOneViolation_WhenGivenCategoryWithNoName() {
+		Category category = new Category();
+		category.setCategoryId(1L);
+		assertEquals(1, validator.validate(category).size());
+
 	}
 	
 	@Test

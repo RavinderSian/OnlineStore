@@ -3,6 +3,7 @@ package com.personal.onlinestore.controller;
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,6 @@ public interface CrudController <T, ID> {
 	ResponseEntity<String> deleteById(@PathVariable ID id);
 	
 	@PostMapping("/save")
-	ResponseEntity<?> save(@RequestBody @Valid T t);
+	ResponseEntity<?> save(@RequestBody @Valid T t, BindingResult bindingResult);
 	
 }
