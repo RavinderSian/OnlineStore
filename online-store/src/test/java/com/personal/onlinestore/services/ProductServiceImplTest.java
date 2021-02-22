@@ -2,6 +2,7 @@ package com.personal.onlinestore.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.personal.onlinestore.model.Category;
+import com.personal.onlinestore.model.Order;
 import com.personal.onlinestore.model.Product;
 import com.personal.onlinestore.repository.ProductRepository;
 
@@ -79,6 +82,33 @@ class ProductServiceImplTest {
 	}
 	
 	@Test
+	public void test_ProductServiceDelete_SetsOrderToNull_WhenDeletingProduct() {
+		//Arrange
+		Order order = new Order();
+		Product product = new Product();
+		order.addProduct(product);
+		product.setOrder(order);
+		//Act
+		productService.delete(product);
+		//Assert
+		assertNull(product.getOrder());
+	}
+	
+	@Test
+	public void test_ProductServiceDelete_SetsCategoryToNull_WhenDeletingProduct() {
+		//Arrange
+		Category category = new Category();
+		category.setName("test");
+		Product product = new Product();
+		category.addProduct(product);
+		product.setCategory(category);
+		//Act
+		productService.delete(product);
+		//Assert
+		assertNull(product.getCategory());
+	}
+	
+	@Test
 	public void test_FindById_CallsRepositoryFindById_WhenCalled() {
 		//Act
 		productService.findById(1L);
@@ -103,6 +133,8 @@ class ProductServiceImplTest {
 		//Assert
 		assertEquals(productOptional, Optional.empty());
 	}
+	
+	
 	
 	@Test
 	public void test_UpdateName_ReturnsProductWithNameTest_WhenGivenProductWithNameTest() {

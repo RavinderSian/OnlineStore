@@ -1,10 +1,15 @@
 package com.personal.onlinestore.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.validator.constraints.CreditCardNumber;
@@ -36,4 +41,17 @@ public class Customer {
 	@NotEmpty(message = "Please enter a valid post code")
 	@Column(name = "post_code")
 	private String postCode;
+	
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+	Set<Order> orders = new HashSet<>();
+	
+	public void addOrder(Order order) {
+		this.getOrders().add(order);
+		order.setCustomer(this);
+	}
+	
+	public void removeProduct(Order order) {
+		this.getOrders().remove(order);
+		order.setCustomer(null);	
+	}
 }

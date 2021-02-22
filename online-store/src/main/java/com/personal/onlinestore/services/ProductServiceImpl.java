@@ -23,6 +23,8 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public void delete(Product product) {
+		product.setCategory(null);
+		product.setOrder(null);
 		repository.delete(product);
 
 	}

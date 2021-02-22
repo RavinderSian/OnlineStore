@@ -1,5 +1,6 @@
 package com.personal.onlinestore.services;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -23,8 +24,9 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public void delete(Category category) {
+		category.getProducts().forEach(product -> product.setCategory(null));
+		category.setProducts(new HashSet<>());
 		repository.delete(category);
-		
 	}
 
 	@Override
