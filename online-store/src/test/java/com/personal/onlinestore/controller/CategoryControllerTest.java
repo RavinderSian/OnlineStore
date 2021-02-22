@@ -110,6 +110,22 @@ public class CategoryControllerTest {
 	}
 	
 	@Test
+	public void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenInvalidCategory() throws Exception {
+		
+		Category category = new Category();
+		category.setCategoryId(1L);
+				
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(category);
+		
+		this.mockMvc.perform(post("/category/save").contentType(APPLICATION_JSON_UTF8).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("{\"name\":\"Please enter a valid category name\"}"));
+	}
+	
+	@Test
 	public void test_UpdateName_ReturnsCorrectStatusAndResponse_WhenGivenId1AndNameNewName() throws Exception {
 		
 		Category category = new Category();

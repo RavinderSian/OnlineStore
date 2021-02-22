@@ -1,9 +1,14 @@
 package com.personal.onlinestore.controller;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+
+import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,15 +50,36 @@ public class CustomerController implements CrudController<Customer, Long>{
 	}
 
 	@Override
-	public ResponseEntity<?> save(Customer customer) {
+	public ResponseEntity<?> save(Customer customer, BindingResult bindingResult) {
+		
+		if (bindingResult.hasFieldErrors()) {
+			Map<String, String> fieldErrorMap = new HashMap<>();
+			
+			bindingResult.getFieldErrors().forEach(objectError -> {
+				fieldErrorMap.put(objectError.getField(), objectError.getDefaultMessage());
+			});
+			
+			return new ResponseEntity<Map<String, String>>(fieldErrorMap, HttpStatus.BAD_REQUEST);
+		}
+		
 		CustomerDTO savedCustomerDTO = customerService.saveAndReturnCustomerDTO(customer);
 		return new ResponseEntity<CustomerDTO>(savedCustomerDTO, HttpStatus.OK);
 	}
 	
 	@PutMapping("/{id}/update")
-	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CustomerDTO customerDTO){
-		CustomerDTO updatedCustomerDTO = customerService.saveCustomerByDTO(id, customerDTO);
-		return new ResponseEntity<CustomerDTO>(updatedCustomerDTO, HttpStatus.OK);
+	public ResponseEntity<?> update(@PathVariable Long id, @RequestBody @Valid Customer customer, BindingResult bindingResult){
+		
+		if (bindingResult.hasFieldErrors()) {
+			Map<String, String> fieldErrorMap = new HashMap<>();
+			
+			bindingResult.getFieldErrors().forEach(objectError -> {
+				fieldErrorMap.put(objectError.getField(), objectError.getDefaultMessage());
+			});
+			
+			return new ResponseEntity<Map<String, String>>(fieldErrorMap, HttpStatus.BAD_REQUEST);
+		}
+		customerService.updateCustomerByCustomer(id, customer);
+		return new ResponseEntity<CustomerDTO>(customerService.updateCustomerByCustomer(id, customer), HttpStatus.OK);
 	}
 	
 }

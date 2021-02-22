@@ -10,6 +10,6 @@ public interface CustomerService {
 	CustomerDTO saveAndReturnCustomerDTO(Customer customer);
 	void deleteById(Long id);
 	Optional<CustomerDTO> findById(Long id);
-	CustomerDTO saveCustomerByDTO(Long id, CustomerDTO customerDTO);
+	CustomerDTO updateCustomerByCustomer(Long id, Customer customer);
 
 }

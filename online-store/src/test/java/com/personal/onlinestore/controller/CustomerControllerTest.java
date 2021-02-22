@@ -23,9 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.personal.onlinestore.model.Category;
 import com.personal.onlinestore.model.Customer;
-import com.personal.onlinestore.model.CustomerDTO;
 import com.personal.onlinestore.repository.CustomerRepository;
 
 @SpringBootTest
@@ -101,6 +99,8 @@ class CustomerControllerTest {
 		customer.setCustomerId(1L);
 		customer.setFirstName("test");
 		customer.setLastName("testing");
+		customer.setCardNumber("379763005117730");
+		customer.setPostCode("UB1 1EP");
 		
 		when(repository.save(customer)).thenReturn(customer);
 		
@@ -115,28 +115,62 @@ class CustomerControllerTest {
 	}
 	
 	@Test
-	public void test_Update_ReturnsCorrectStatusAndResponse_WhenGivenValidCustomerDTO() throws Exception {
+	public void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenInvalidCustomer() throws Exception {
 		
-		CustomerDTO customerDTO = new CustomerDTO();
-		customerDTO.setCustomerId(1L);
-		customerDTO.setFirstName("updated");
-		customerDTO.setLastName("tested");
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("test");
+		customer.setPostCode("UB1 1EP");
+				
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(customer);
+		
+		this.mockMvc.perform(post("/customer/save").contentType(APPLICATION_JSON_UTF8).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("{\"lastName\":\"Please enter a valid last name\"}"));
+	}
+	
+	@Test
+	public void test_Update_ReturnsCorrectStatusAndResponse_WhenGivenValidCustomer() throws Exception {
 		
 		Customer customer = new Customer();
 		customer.setCustomerId(1L);
 		customer.setFirstName("updated");
 		customer.setLastName("tested");
+		customer.setCardNumber("379763005117730");
+		customer.setPostCode("UB1 1EP");
 		
 		when(repository.save(customer)).thenReturn(customer);
 		
 		ObjectMapper mapper = new ObjectMapper();
 	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
 	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-	    String requestJson = ow.writeValueAsString(customerDTO);
+	    String requestJson = ow.writeValueAsString(customer);
 		
 		this.mockMvc.perform(put("/customer/1/update").contentType(APPLICATION_JSON_UTF8).content(requestJson))
 		.andExpect(status().isOk())
 		.andExpect(content().json("{'customerId':1, 'firstName':'updated', 'lastName':'tested'}"));
+	}
+	
+	@Test
+	public void test_Update_ReturnsCorrectStatusAndResponse_WhenGivenInvalidCustomer() throws Exception {
+		
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("updated");
+		customer.setCardNumber("379763005117730");
+		customer.setPostCode("UB1 1EP");
+				
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(customer);
+		
+		this.mockMvc.perform(put("/customer/1/update").contentType(APPLICATION_JSON_UTF8).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("{\"lastName\":\"Please enter a valid last name\"}"));
 	}
 
 }

@@ -2,11 +2,16 @@ package com.personal.onlinestore.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
+
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,14 +33,37 @@ class CustomerServiceImplTest {
 	@Mock
 	Customer mockCustomer;
 
+	private Validator validator;
+
 	@BeforeEach
 	void setUp() throws Exception {
 		customerService = new CustomerServiceImpl(mockRepository);
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		validator = factory.getValidator();
 	}
 
 	@Test
 	public void test_CustomerService_IsNotNull() {
 		assertNotNull(customerService);
+	}
+	
+	@Test
+	public void test_FieldValidation_Gives4Violations_WhenGivenCustomerWithInvalidCardNumberAndAllOtherAttributesEmpty() {
+		
+		Customer customer = new Customer();
+		customer.setCardNumber("1");
+		assertEquals(4, validator.validate(customer).size());
+	}
+	
+	@Test
+	public void test_FieldValidation_Gives0Violations_WhenGivenValidCustomer() {
+		
+		Customer customer = new Customer();
+		customer.setFirstName("test");
+		customer.setLastName("testing");
+		customer.setCardNumber("379763005117730");
+		customer.setPostCode("UB1 1EP");
+		assertEquals(0, validator.validate(customer).size());
 	}
 	
 	@Test
@@ -45,26 +73,30 @@ class CustomerServiceImplTest {
 		customer.setCustomerId(1L);
 		customer.setFirstName("test");
 		customer.setLastName("testing");
-		customer.setCardNumber("1");
+		customer.setCardNumber("379763005117730");
+		customer.setPostCode("UB1 1EP");
 		when(mockRepository.save(customer)).thenReturn(customer);
 		//Act
 		customerService.saveAndReturnCustomerDTO(customer);
 		//Assert
+        assertTrue(validator.validate(customer).isEmpty());
 		verify(mockRepository, times(1)).save(customer);
 	}
 	
 	@Test
-	public void test_SaveAndReturnCustomerDTO_ReturnsCorrectCustomerDTO_WhenGivenCustomer() {
+	public void test_SaveAndReturnCustomerDTO_ReturnsCorrectCustomerDTO_WhenGivenValidCustomer() {
 		//Arrange
 		Customer customer = new Customer();
 		customer.setCustomerId(1L);
 		customer.setFirstName("test");
 		customer.setLastName("testing");
-		customer.setCardNumber("1");
+		customer.setCardNumber("379763005117730");
+		customer.setPostCode("UB1 1EP");
 		when(mockRepository.save(customer)).thenReturn(customer);
 		//Act
 		CustomerDTO savedCustomerDTO = customerService.saveAndReturnCustomerDTO(customer);
 		//Assert
+		assertTrue(validator.validate(customer).isEmpty());
 		assertEquals(savedCustomerDTO.getCustomerId(), customer.getCustomerId());
 		assertEquals(savedCustomerDTO.getFirstName(), customer.getFirstName());
 		assertEquals(savedCustomerDTO.getLastName(), customer.getLastName());
@@ -93,7 +125,8 @@ class CustomerServiceImplTest {
 		customer.setCustomerId(1L);
 		customer.setFirstName("test");
 		customer.setLastName("testing");
-		customer.setCardNumber("1");
+		customer.setCardNumber("379763005117730");
+		customer.setPostCode("UB1 1EP");
 		when(mockRepository.findById(1L)).thenReturn(Optional.of(customer));
 		//Act
 		Optional<CustomerDTO> customerDTOOptional = customerService.findById(1L);
@@ -112,14 +145,23 @@ class CustomerServiceImplTest {
 	}
 	
 	@Test
-	public void test_saveCustomerByDTO_ReturnsCustomerDTOWithFirstNameTest_WhenGivenCustomerDTOWithFirstNameTest() {
+	public void test_updateCustomerByCustomer_ReturnsCustomerDTOWithCorrectInfo_WhenGivenCustomerWithCorrectInfoButNoId() {
 		//Arrange
 		
 		Customer customer = new Customer();
-		customer.setCustomerId(1L);
 		customer.setFirstName("test");
 		customer.setLastName("testing");
-		when(mockRepository.save(customer)).thenReturn(customer);
+		customer.setCardNumber("379763005117730");
+		customer.setPostCode("UB1 1EP");
+		
+		Customer savedCustomer = new Customer();
+		savedCustomer.setCustomerId(1L);
+		savedCustomer.setFirstName("test");
+		savedCustomer.setLastName("testing");
+		savedCustomer.setCardNumber("379763005117730");
+		savedCustomer.setPostCode("UB1 1EP");
+		
+		when(mockRepository.save(savedCustomer)).thenReturn(savedCustomer);
 		
 		CustomerDTO customerDTO = new CustomerDTO();
 		customerDTO.setCustomerId(1L);
@@ -127,8 +169,9 @@ class CustomerServiceImplTest {
 		customerDTO.setLastName("testing");
 		
 		//Act
-		CustomerDTO updatedCustomerDTO = customerService.saveCustomerByDTO(1L, customerDTO);
+		CustomerDTO updatedCustomerDTO = customerService.updateCustomerByCustomer(1L, customer);
 		//Assert
+		assertTrue(validator.validate(customer).isEmpty());
 		assertEquals(customerDTO, updatedCustomerDTO);
 	}
 
