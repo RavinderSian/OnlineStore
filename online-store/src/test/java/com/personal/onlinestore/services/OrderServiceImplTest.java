@@ -80,7 +80,7 @@ class OrderServiceImplTest {
 	}
 	
 	@Test
-	public void test_OrderServiceDelete_ClearsBothSidesOfMapping_WhenDeletingOrder() {
+	public void test_OrderServiceDelete_ClearsBothSidesOfProductOrderMapping_WhenDeletingOrder() {
 		//Arrange
 		Order order = new Order();
 		Product product = new Product();

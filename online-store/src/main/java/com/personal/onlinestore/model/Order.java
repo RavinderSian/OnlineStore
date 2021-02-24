@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,10 +15,14 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
+@EqualsAndHashCode(exclude = {"products", "customer"})
 @NoArgsConstructor
 @Entity(name = "orders") //order is reserved as a name so changed name to orders
 public class Order {
@@ -29,7 +34,8 @@ public class Order {
 	@CreationTimestamp
 	private LocalDateTime orderDate;
 	
-	@OneToMany(mappedBy = "order")
+	@JsonIgnore
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private List<Product> products = new ArrayList<>();
 	
 	public void addProduct(Product product) {
@@ -42,6 +48,7 @@ public class Order {
 		product.setOrder(null);
 	}
 	
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "customer_id")
 	private Customer customer;

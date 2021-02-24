@@ -14,6 +14,8 @@ import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.validator.constraints.CreditCardNumber;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -42,6 +44,7 @@ public class Customer {
 	@Column(name = "post_code")
 	private String postCode;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
 	Set<Order> orders = new HashSet<>();
 	

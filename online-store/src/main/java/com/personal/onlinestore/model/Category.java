@@ -11,10 +11,14 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
+@EqualsAndHashCode(exclude = "products")
 @NoArgsConstructor
 @Entity
 public class Category {
@@ -27,6 +31,7 @@ public class Category {
 	@Column(name = "category_name")
 	private String name;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "category")
 	private Set<Product> products = new HashSet<>();
 	
