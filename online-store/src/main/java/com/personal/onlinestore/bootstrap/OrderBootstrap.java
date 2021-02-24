@@ -44,7 +44,6 @@ public class OrderBootstrap implements CommandLineRunner {
 		customer.setPostCode("UB1");
 		customerRepository.save(customer);
 		customer.addOrder(order);
-		repository.save(order);
 		customerRepository.save(customer);
 	}
 
