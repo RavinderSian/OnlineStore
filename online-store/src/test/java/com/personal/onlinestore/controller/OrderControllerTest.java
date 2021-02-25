@@ -1,14 +1,17 @@
 package com.personal.onlinestore.controller;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -23,7 +26,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.personal.onlinestore.model.Order;
+import com.personal.onlinestore.model.Product;
 import com.personal.onlinestore.repository.OrderRepository;
+import com.personal.onlinestore.repository.ProductRepository;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -38,8 +43,9 @@ public class OrderControllerTest {
 	@MockBean
 	OrderRepository repository;
 	
-	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
-
+	@MockBean
+	ProductRepository productRepository;
+	
 	@Test
 	public void test_Controller_IsNotNull() {
 		assertNotNull(controller);
@@ -100,9 +106,39 @@ public class OrderControllerTest {
 	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
 	    String requestJson = ow.writeValueAsString(order);
 		
-		this.mockMvc.perform(post("/order/save").contentType(APPLICATION_JSON_UTF8).content(requestJson))
+		this.mockMvc.perform(post("/order/save").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
 		.andExpect(status().isOk())
 		.andExpect(content().json("{'orderId':1}"));
+	}
+	
+	@Test
+	public void test_GetProducts_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
+		
+		Order order = new Order();
+		order.setOrderId(1L);
+		Product product = new Product();
+		product.setProductId(1L);
+		product.setName("testing order bootstrap");
+		Product product2 = new Product();
+		product2.setProductId(2L);
+		product2.setName("testing order");
+		
+		order.addProduct(product);
+		order.addProduct(product2);
+		
+		List<Product> products = new ArrayList<>();
+		products.add(product);
+		products.add(product2);
+		
+		when(productRepository.findProductsByOrder_OrderId(1L)).thenReturn(products);
+		
+		mockMvc.perform(get("/order/1/products"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect((jsonPath("$[0].productId", is(1))))
+				.andExpect((jsonPath("$[0].name", is("testing order bootstrap"))))
+				.andExpect((jsonPath("$[1].productId", is(2))))
+				.andExpect((jsonPath("$[1].name", is("testing order"))));
 	}
 
 

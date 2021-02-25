@@ -6,5 +6,4 @@ import com.personal.onlinestore.model.Order;
 
 public interface OrderRepository extends CrudRepository<Order, Long> {
 
-	
 }

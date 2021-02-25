@@ -1,14 +1,18 @@
 package com.personal.onlinestore.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.personal.onlinestore.model.Order;
+import com.personal.onlinestore.model.Product;
 import com.personal.onlinestore.services.OrderService;
 
 @RestController
@@ -46,6 +50,15 @@ public class OrderController implements CrudController<Order, Long>{
 	public ResponseEntity<?> save(Order order, BindingResult bindingResult) {
 		Order savedOrder = orderService.save(order);
 		return new ResponseEntity<Order>(savedOrder, HttpStatus.OK);
+	}
+	
+	@GetMapping("/{id}/products")
+	public ResponseEntity<?> getProductsForOrder(@PathVariable Long id){
+		List<Product> products = orderService.findProductsByOrderId(id);
+		if (products.isEmpty()) {
+			return new ResponseEntity<String>("Order not found", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
 	}
 	
 }

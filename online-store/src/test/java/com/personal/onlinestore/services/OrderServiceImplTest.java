@@ -7,6 +7,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +20,7 @@ import com.personal.onlinestore.model.Customer;
 import com.personal.onlinestore.model.Order;
 import com.personal.onlinestore.model.Product;
 import com.personal.onlinestore.repository.OrderRepository;
+import com.personal.onlinestore.repository.ProductRepository;
 
 @SpringBootTest
 class OrderServiceImplTest {
@@ -28,11 +31,14 @@ class OrderServiceImplTest {
 	OrderRepository mockRepository;
 	
 	@Mock
+	ProductRepository productRepositoryMock;
+	
+	@Mock
 	Order mockOrder;
 
 	@BeforeEach
 	void setUp() throws Exception {
-		orderService = new OrderServiceImpl(mockRepository);
+		orderService = new OrderServiceImpl(mockRepository, productRepositoryMock);
 	}
 
 	@Test
@@ -117,6 +123,40 @@ class OrderServiceImplTest {
 		Optional<Order> orderOptional = orderService.findById(10L);
 		//Assert
 		assertEquals(orderOptional, Optional.empty());
+	}
+	
+	@Test
+	public void test_FindProductsByOrderId_ReturnsCorrectProducts_WhenCalledWithId1() {
+		//Arrange
+		Order order = new Order();
+		order.setOrderId(1L);
+		Product product = new Product();
+		product.setName("testing order bootstrap");
+		Product product2 = new Product();
+		product2.setName("testing order bootstrap");
+		
+		List<Product> products = new ArrayList<>();
+		products.add(product);
+		products.add(product2);
+		
+		when(productRepositoryMock.findProductsByOrder_OrderId(1L)).thenReturn(products);
+		//Act
+		List<Product> productsForOrder = orderService.findProductsByOrderId(1L);
+		//Assert
+		assertEquals(product, productsForOrder.get(0));
+		assertEquals(product2, productsForOrder.get(1));
+		assertEquals(2, productsForOrder.size());
+	}
+	
+	@Test
+	public void test_FindProductsByOrderId_ReturnsEmptyList_WhenCalledWithId10() {
+		//Arrange
+		Order order = new Order();
+		order.setOrderId(10L);
+		//Act
+		List<Product> productsForOrder = orderService.findProductsByOrderId(10L);
+		//Assert
+		assertEquals(0, productsForOrder.size());
 	}
 
 }
