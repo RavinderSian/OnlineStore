@@ -76,7 +76,7 @@
 					"response": []
 				},
 				{
-					"name": "saveCustomer Copy",
+					"name": "updateCustomer",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -352,7 +352,7 @@
 				{
 					"name": "updateName",
 					"request": {
-						"method": "POST",
+						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
