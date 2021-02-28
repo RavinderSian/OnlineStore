@@ -1,12 +1,14 @@
 package com.personal.onlinestore.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.personal.onlinestore.model.Category;
+import com.personal.onlinestore.model.Product;
 import com.personal.onlinestore.services.CategoryService;
 
 @RestController
@@ -73,6 +76,17 @@ public class CategoryController implements CrudController<Category, Long> {
 		Category category = categoryOptional.get();
 		categoryService.updateName(category, name);
 		return new ResponseEntity<Category>(category, HttpStatus.OK);
+	}
+	
+	@GetMapping("/{id}/products")
+	public ResponseEntity<?> getProducts(@PathVariable Long id){
+		List<Product> products = categoryService.findProductsByCategoryId(id);
+		if (products.isEmpty()) {
+			return new ResponseEntity<String>("Category not found", HttpStatus.NOT_FOUND);
+		}
+		
+		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
+		 
 	}
 
 }

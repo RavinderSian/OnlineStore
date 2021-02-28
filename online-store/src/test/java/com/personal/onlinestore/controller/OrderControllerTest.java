@@ -27,8 +27,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.personal.onlinestore.model.Order;
 import com.personal.onlinestore.model.Product;
-import com.personal.onlinestore.repository.OrderRepository;
-import com.personal.onlinestore.repository.ProductRepository;
+import com.personal.onlinestore.services.OrderService;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -41,10 +40,7 @@ public class OrderControllerTest {
 	OrderController controller;
 	
 	@MockBean
-	OrderRepository repository;
-	
-	@MockBean
-	ProductRepository productRepository;
+	OrderService service;
 	
 	@Test
 	public void test_Controller_IsNotNull() {
@@ -57,7 +53,7 @@ public class OrderControllerTest {
 		Order order = new Order();
 		order.setOrderId(1L);
 		
-		when(repository.findById(1L)).thenReturn(Optional.of(order));
+		when(service.findById(1L)).thenReturn(Optional.of(order));
 		
 		mockMvc.perform(get("/order/1"))
 				.andExpect(status().isOk())
@@ -78,7 +74,7 @@ public class OrderControllerTest {
 		Order order = new Order();
 		order.setOrderId(1L);
 		
-		when(repository.findById(1L)).thenReturn(Optional.of(order));
+		when(service.findById(1L)).thenReturn(Optional.of(order));
 		
 		mockMvc.perform(delete("/order/delete/1"))
 				.andExpect(status().isOk())
@@ -99,7 +95,7 @@ public class OrderControllerTest {
 		Order order = new Order();
 		order.setOrderId(1L);
 		
-		when(repository.save(order)).thenReturn(order);
+		when(service.save(order)).thenReturn(order);
 		
 		ObjectMapper mapper = new ObjectMapper();
 	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
@@ -113,9 +109,7 @@ public class OrderControllerTest {
 	
 	@Test
 	public void test_GetProducts_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
-		
-		Order order = new Order();
-		order.setOrderId(1L);
+
 		Product product = new Product();
 		product.setProductId(1L);
 		product.setName("testing order bootstrap");
@@ -123,14 +117,11 @@ public class OrderControllerTest {
 		product2.setProductId(2L);
 		product2.setName("testing order");
 		
-		order.addProduct(product);
-		order.addProduct(product2);
-		
 		List<Product> products = new ArrayList<>();
 		products.add(product);
 		products.add(product2);
 		
-		when(productRepository.findProductsByOrder_OrderId(1L)).thenReturn(products);
+		when(service.findProductsByOrderId(1L)).thenReturn(products);
 		
 		mockMvc.perform(get("/order/1/products"))
 				.andExpect(status().isOk())
@@ -141,5 +132,12 @@ public class OrderControllerTest {
 				.andExpect((jsonPath("$[1].name", is("testing order"))));
 	}
 
+	@Test
+	public void test_GetProducts_ReturnsCorrectStatusAndResponse_WhenGivenId10() throws Exception {
+		
+		mockMvc.perform(get("/order/10/products"))
+				.andExpect(status().isNotFound())
+				.andExpect(content().string("Order not found"));
+	}
 
 }

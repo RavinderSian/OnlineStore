@@ -128,8 +128,6 @@ class OrderServiceImplTest {
 	@Test
 	public void test_FindProductsByOrderId_ReturnsCorrectProducts_WhenCalledWithId1() {
 		//Arrange
-		Order order = new Order();
-		order.setOrderId(1L);
 		Product product = new Product();
 		product.setName("testing order bootstrap");
 		Product product2 = new Product();
@@ -150,9 +148,6 @@ class OrderServiceImplTest {
 	
 	@Test
 	public void test_FindProductsByOrderId_ReturnsEmptyList_WhenCalledWithId10() {
-		//Arrange
-		Order order = new Order();
-		order.setOrderId(10L);
 		//Act
 		List<Product> productsForOrder = orderService.findProductsByOrderId(10L);
 		//Assert

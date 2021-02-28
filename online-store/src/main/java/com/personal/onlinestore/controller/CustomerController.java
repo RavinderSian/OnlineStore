@@ -78,7 +78,6 @@ public class CustomerController implements CrudController<Customer, Long>{
 			
 			return new ResponseEntity<Map<String, String>>(fieldErrorMap, HttpStatus.BAD_REQUEST);
 		}
-		customerService.updateCustomerByCustomer(id, customer);
 		return new ResponseEntity<CustomerDTO>(customerService.updateCustomerByCustomer(id, customer), HttpStatus.OK);
 	}
 	

@@ -32,12 +32,14 @@ public class ProductBootstrap implements CommandLineRunner{
 		
 		Category category = new Category();
 		category.setName("test category");
+		categoryRepository.save(category);
+
 		category.addProduct(product);
 		categoryRepository.save(category);
-		repository.save(product);
 		
 		Order order = new Order();
 		orderRepository.save(order);
+		
 		order.addProduct(product);
 		orderRepository.save(order);
 

@@ -7,6 +7,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Validation;
@@ -21,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.personal.onlinestore.model.Category;
 import com.personal.onlinestore.model.Product;
 import com.personal.onlinestore.repository.CategoryRepository;
+import com.personal.onlinestore.repository.ProductRepository;
 
 @SpringBootTest
 class CategoryServiceImplTest {
@@ -31,13 +34,16 @@ class CategoryServiceImplTest {
 	CategoryRepository mockRepository;
 	
 	@Mock
+	ProductRepository productRepositoryMock;
+	
+	@Mock
 	Category mockCategory;
 	
 	private Validator validator;
 
 	@BeforeEach
 	void setUp() throws Exception {
-		categoryService = new CategoryServiceImpl(mockRepository);
+		categoryService = new CategoryServiceImpl(mockRepository, productRepositoryMock);
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 	}
@@ -132,6 +138,35 @@ class CategoryServiceImplTest {
 		//Assert
 		assertEquals("test", category.getName());
 		verify(mockRepository, times(1)).save(category);
+	}
+	
+	@Test
+	public void test_FindProductsByCategoryId_ReturnsCorrectProducts_WhenCalledWithId1() {
+		//Arrange
+		Product product = new Product();
+		product.setName("testing order bootstrap");
+		Product product2 = new Product();
+		product2.setName("testing order bootstrap");
+		
+		List<Product> products = new ArrayList<>();
+		products.add(product);
+		products.add(product2);
+		
+		when(productRepositoryMock.findProductsByCategory_CategoryId(1L)).thenReturn(products);
+		//Act
+		List<Product> productsForOrder = categoryService.findProductsByCategoryId(1L);
+		//Assert
+		assertEquals(product, productsForOrder.get(0));
+		assertEquals(product2, productsForOrder.get(1));
+		assertEquals(2, productsForOrder.size());
+	}
+	
+	@Test
+	public void test_FindProductsByCategoryId_ReturnsEmptyList_WhenCalledWithId10() {
+		//Act
+		List<Product> productsForOrder = categoryService.findProductsByCategoryId(1L);
+		//Assert
+		assertEquals(0, productsForOrder.size());
 	}
 
 }
