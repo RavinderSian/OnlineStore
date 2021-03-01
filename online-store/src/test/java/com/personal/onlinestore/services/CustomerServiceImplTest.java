@@ -7,6 +7,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Validation;
@@ -20,7 +22,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.personal.onlinestore.model.Customer;
 import com.personal.onlinestore.model.CustomerDTO;
+import com.personal.onlinestore.model.Order;
 import com.personal.onlinestore.repository.CustomerRepository;
+import com.personal.onlinestore.repository.OrderRepository;
 
 @SpringBootTest
 class CustomerServiceImplTest {
@@ -31,13 +35,16 @@ class CustomerServiceImplTest {
 	CustomerRepository mockRepository;
 	
 	@Mock
+	OrderRepository orderRepositoryMock;
+	
+	@Mock
 	Customer mockCustomer;
 
 	private Validator validator;
 
 	@BeforeEach
 	void setUp() throws Exception {
-		customerService = new CustomerServiceImpl(mockRepository);
+		customerService = new CustomerServiceImpl(mockRepository, orderRepositoryMock);
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 	}
@@ -173,6 +180,41 @@ class CustomerServiceImplTest {
 		//Assert
 		assertTrue(validator.validate(customer).isEmpty());
 		assertEquals(customerDTO, updatedCustomerDTO);
+	}
+	
+	@Test
+	public void test_FindOrdersByCustomerId_ReturnsCorrectOrders_WhenCalledWithId1() {
+		//Arrange
+		Customer customer = new Customer();
+		customer.setFirstName("test");
+		customer.setLastName("testing");
+		customer.setCardNumber("379763005117730");
+		customer.setPostCode("UB1 1EP");
+		
+		Order order = new Order();
+		order.setOrderId(1L);
+		Order order2 = new Order();
+		order2.setOrderId(2L);
+		
+		List<Order> orders = new ArrayList<>();
+		orders.add(order);
+		orders.add(order2);
+		
+		when(orderRepositoryMock.findOrdersByCustomer_CustomerId(1L)).thenReturn(orders);
+		//Act
+		List<Order> ordersForCustomer = customerService.findOrdersByCustomerId(1L);
+		//Assert
+		assertEquals(order, ordersForCustomer.get(0));
+		assertEquals(order2, ordersForCustomer.get(1));
+		assertEquals(2, ordersForCustomer.size());
+	}
+	
+	@Test
+	public void test_FindOrdersByCustomerId_ReturnsEmptyList_WhenCalledWithId10() {
+		//Act
+		List<Order> ordersForCustomer = customerService.findOrdersByCustomerId(1L);
+		//Assert
+		assertEquals(0, ordersForCustomer.size());
 	}
 
 }

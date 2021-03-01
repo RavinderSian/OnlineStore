@@ -1,5 +1,6 @@
 package com.personal.onlinestore.controller;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -7,8 +8,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -24,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.personal.onlinestore.model.Customer;
 import com.personal.onlinestore.model.CustomerDTO;
+import com.personal.onlinestore.model.Order;
 import com.personal.onlinestore.services.CustomerService;
 
 @SpringBootTest
@@ -191,4 +196,38 @@ class CustomerControllerTest {
 		.andExpect(content().string("{\"lastName\":\"Please enter a valid last name\"}"));
 	}
 
+	@Test
+	public void test_GetOrders_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
+		
+		Customer customer = new Customer();
+		customer.setFirstName("test");
+		customer.setLastName("testing");
+		customer.setCardNumber("379763005117730");
+		customer.setPostCode("UB1 1EP");
+		
+		Order order = new Order();
+		order.setOrderId(1L);
+		Order order2 = new Order();
+		order2.setOrderId(2L);
+		
+		List<Order> orders = new ArrayList<>();
+		orders.add(order);
+		orders.add(order2);
+		
+		when(service.findOrdersByCustomerId(1L)).thenReturn(orders);
+		
+		mockMvc.perform(get("/customer/1/orders"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect((jsonPath("$[0].orderId", is(1))))
+				.andExpect((jsonPath("$[1].orderId", is(2))));
+	}
+
+	@Test
+	public void test_GetOrders_ReturnsCorrectStatusAndResponse_WhenGivenId10() throws Exception {
+		
+		mockMvc.perform(get("/customer/10/orders"))
+				.andExpect(status().isNotFound())
+				.andExpect(content().string("Customer not found"));
+	}
 }
