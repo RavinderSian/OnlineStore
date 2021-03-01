@@ -54,11 +54,11 @@ public class OrderController implements CrudController<Order, Long>{
 	
 	@GetMapping("/{id}/products")
 	public ResponseEntity<?> getProductsForOrder(@PathVariable Long id){
-		List<Product> products = orderService.findProductsByOrderId(id);
-		if (products.isEmpty()) {
+		Optional<Order> orderOptional = orderService.findById(id);
+		if (orderOptional.isEmpty()) {
 			return new ResponseEntity<String>("Order not found", HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<List<Product>>(products, HttpStatus.OK);
+		return new ResponseEntity<List<Product>>(orderService.findProductsByOrderId(id), HttpStatus.OK);
 	}
 	
 }

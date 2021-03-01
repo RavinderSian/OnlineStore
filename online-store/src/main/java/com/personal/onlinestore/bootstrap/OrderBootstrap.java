@@ -46,6 +46,7 @@ public class OrderBootstrap implements CommandLineRunner {
 		customer.setFirstName("test");
 		customer.setLastName("customer");
 		customer.setPostCode("UB1");
+		customer.setCardNumber("348768968933971");
 		customerRepository.save(customer);
 		customer.addOrder(order);
 		customerRepository.save(customer);

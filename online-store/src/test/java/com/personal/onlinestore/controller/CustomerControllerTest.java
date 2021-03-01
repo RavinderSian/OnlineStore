@@ -139,6 +139,7 @@ class CustomerControllerTest {
 		customer.setCustomerId(1L);
 		customer.setFirstName("test");
 		customer.setPostCode("UB1 1EP");
+		customer.setCardNumber("348768968933971");
 				
 		ObjectMapper mapper = new ObjectMapper();
 	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
@@ -205,6 +206,8 @@ class CustomerControllerTest {
 		customer.setCardNumber("379763005117730");
 		customer.setPostCode("UB1 1EP");
 		
+		CustomerDTO customerDTO = new CustomerDTO();
+		
 		Order order = new Order();
 		order.setOrderId(1L);
 		Order order2 = new Order();
@@ -214,6 +217,7 @@ class CustomerControllerTest {
 		orders.add(order);
 		orders.add(order2);
 		
+		when(service.findById(1L)).thenReturn(Optional.of(customerDTO));
 		when(service.findOrdersByCustomerId(1L)).thenReturn(orders);
 		
 		mockMvc.perform(get("/customer/1/orders"))

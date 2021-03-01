@@ -165,6 +165,9 @@ public class CategoryControllerTest {
 		products.add(product);
 		products.add(product2);
 		
+		Category category = new Category();
+		
+		when(service.findById(1L)).thenReturn(Optional.of(category));
 		when(service.findProductsByCategoryId(1L)).thenReturn(products);
 		
 		mockMvc.perform(get("/category/1/products"))

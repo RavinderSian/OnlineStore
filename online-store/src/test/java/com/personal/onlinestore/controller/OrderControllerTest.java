@@ -121,6 +121,9 @@ public class OrderControllerTest {
 		products.add(product);
 		products.add(product2);
 		
+		Order order = new Order();
+		
+		when(service.findById(1L)).thenReturn(Optional.of(order));
 		when(service.findProductsByOrderId(1L)).thenReturn(products);
 		
 		mockMvc.perform(get("/order/1/products"))

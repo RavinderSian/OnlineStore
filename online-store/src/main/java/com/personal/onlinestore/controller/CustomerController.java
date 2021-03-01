@@ -86,12 +86,11 @@ public class CustomerController implements CrudController<Customer, Long>{
 	
 	@GetMapping("/{id}/orders")
 	public ResponseEntity<?> getOrders(@PathVariable Long id){
-		List<Order> orders = customerService.findOrdersByCustomerId(id);
-		if (orders.isEmpty()) {
+		Optional<CustomerDTO> customerDTOOptional = customerService.findById(id);
+		if (customerDTOOptional.isEmpty()) {
 			return new ResponseEntity<String>("Customer not found", HttpStatus.NOT_FOUND);
 		}
-		
-		return new ResponseEntity<List<Order>>(orders, HttpStatus.OK);
+		return new ResponseEntity<List<Order>>(customerService.findOrdersByCustomerId(id), HttpStatus.OK);
 		 
 	}
 	

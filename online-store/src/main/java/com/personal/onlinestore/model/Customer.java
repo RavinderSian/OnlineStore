@@ -36,6 +36,7 @@ public class Customer {
 	@Column(name = "last_name")
 	private String lastName;
 	
+	@NotEmpty(message = "Please enter a credit card number")
 	@CreditCardNumber(message = "Please enter a valid card number")
 	@Column(name = "credit_card_number")
 	private String cardNumber;
