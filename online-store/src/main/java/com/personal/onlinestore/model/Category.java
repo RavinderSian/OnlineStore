@@ -3,6 +3,7 @@ package com.personal.onlinestore.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,17 +32,18 @@ public class Category {
 	@Column(name = "category_name")
 	private String name;
 	
-	@JsonIgnore
-	@OneToMany(mappedBy = "category")
+	@JsonIgnore 
+	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
 	private Set<Product> products = new HashSet<>();
 	
 	public void addProduct(Product product) {
-		this.getProducts().add(product);
+		this.products.add(product); 
 		product.setCategory(this);
+
 	}
 	
 	public void removeProduct(Product product) {
-		this.getProducts().remove(product);
+		this.products.remove(product);
 		product.setCategory(null);
 	}
 	

@@ -39,12 +39,12 @@ public class Order {
 	private List<Product> products = new ArrayList<>();
 	
 	public void addProduct(Product product) {
-		this.getProducts().add(product);
+		this.products.add(product);
 		product.setOrder(this);
 	}
 	
 	public void removeProduct(Product product) {
-		this.getProducts().remove(product);
+		this.products.remove(product);
 		product.setOrder(null);
 	}
 	

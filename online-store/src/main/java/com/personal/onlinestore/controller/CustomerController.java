@@ -1,6 +1,7 @@
 package com.personal.onlinestore.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,16 +19,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.personal.onlinestore.model.Customer;
 import com.personal.onlinestore.model.CustomerDTO;
+import com.personal.onlinestore.model.Order;
 import com.personal.onlinestore.services.CustomerService;
+import com.personal.onlinestore.services.OrderService;
 
 @RestController
 @RequestMapping("/customer")
 public class CustomerController implements CrudController<Customer, Long>{
 
 	private final CustomerService customerService;
+	private final OrderService orderService;
 
-	public CustomerController(CustomerService customerService) {
+	public CustomerController(CustomerService customerService, OrderService orderService) {
 		this.customerService = customerService;
+		this.orderService = orderService;
 	}
 
 	@Override
@@ -78,8 +84,37 @@ public class CustomerController implements CrudController<Customer, Long>{
 			
 			return new ResponseEntity<Map<String, String>>(fieldErrorMap, HttpStatus.BAD_REQUEST);
 		}
-		customerService.updateCustomerByCustomer(id, customer);
 		return new ResponseEntity<CustomerDTO>(customerService.updateCustomerByCustomer(id, customer), HttpStatus.OK);
+	}
+	
+	@GetMapping("/{id}/orders")
+	public ResponseEntity<?> getOrders(@PathVariable Long id){
+		Optional<CustomerDTO> customerDTOOptional = customerService.findById(id);
+		if (customerDTOOptional.isEmpty()) {
+			return new ResponseEntity<String>("Customer not found", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<List<Order>>(customerService.findOrdersByCustomerId(id), HttpStatus.OK);
+		 
+	}
+	
+	@GetMapping("/{id}/addorder/{orderId}")
+	public ResponseEntity<?> addProducts(@PathVariable Long id, @PathVariable Long orderId){
+		Optional<Customer> customerOptional = customerService.findCustomerById(id);
+		if (customerOptional.isEmpty()) {
+			return new ResponseEntity<String>("Customer not found", HttpStatus.NOT_FOUND);
+		}
+		
+		Optional<Order> orderOptional = orderService.findById(orderId);
+		if (orderOptional.isEmpty()) {
+			return new ResponseEntity<String>("Order not found", HttpStatus.NOT_FOUND);
+		}
+		
+		Customer customer = customerOptional.get();
+		Order order = orderOptional.get();
+		customer.addOrder(order);
+		customerService.saveAndReturnCustomerDTO(customer);
+		
+		return new ResponseEntity<String>("Order with id " + orderId + " added to Customer with id " + id, HttpStatus.OK);
 	}
 	
 }

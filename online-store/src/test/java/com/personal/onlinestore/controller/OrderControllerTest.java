@@ -1,14 +1,17 @@
 package com.personal.onlinestore.controller;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -23,7 +26,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.personal.onlinestore.model.Order;
-import com.personal.onlinestore.repository.OrderRepository;
+import com.personal.onlinestore.model.Product;
+import com.personal.onlinestore.services.OrderService;
+import com.personal.onlinestore.services.ProductService;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -36,10 +41,11 @@ public class OrderControllerTest {
 	OrderController controller;
 	
 	@MockBean
-	OrderRepository repository;
+	OrderService service;
 	
-	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
-
+	@MockBean
+	ProductService productService;
+	
 	@Test
 	public void test_Controller_IsNotNull() {
 		assertNotNull(controller);
@@ -51,7 +57,7 @@ public class OrderControllerTest {
 		Order order = new Order();
 		order.setOrderId(1L);
 		
-		when(repository.findById(1L)).thenReturn(Optional.of(order));
+		when(service.findById(1L)).thenReturn(Optional.of(order));
 		
 		mockMvc.perform(get("/order/1"))
 				.andExpect(status().isOk())
@@ -72,7 +78,7 @@ public class OrderControllerTest {
 		Order order = new Order();
 		order.setOrderId(1L);
 		
-		when(repository.findById(1L)).thenReturn(Optional.of(order));
+		when(service.findById(1L)).thenReturn(Optional.of(order));
 		
 		mockMvc.perform(delete("/order/delete/1"))
 				.andExpect(status().isOk())
@@ -93,17 +99,90 @@ public class OrderControllerTest {
 		Order order = new Order();
 		order.setOrderId(1L);
 		
-		when(repository.save(order)).thenReturn(order);
+		when(service.save(order)).thenReturn(order);
 		
 		ObjectMapper mapper = new ObjectMapper();
 	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
 	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
 	    String requestJson = ow.writeValueAsString(order);
 		
-		this.mockMvc.perform(post("/order/save").contentType(APPLICATION_JSON_UTF8).content(requestJson))
+		this.mockMvc.perform(post("/order/save").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
 		.andExpect(status().isOk())
 		.andExpect(content().json("{'orderId':1}"));
 	}
+	
+	@Test
+	public void test_GetProducts_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
 
+		Product product = new Product();
+		product.setProductId(1L);
+		product.setName("testing order bootstrap");
+		Product product2 = new Product();
+		product2.setProductId(2L);
+		product2.setName("testing order");
+		
+		List<Product> products = new ArrayList<>();
+		products.add(product);
+		products.add(product2);
+		
+		Order order = new Order();
+		
+		when(service.findById(1L)).thenReturn(Optional.of(order));
+		when(service.findProductsByOrderId(1L)).thenReturn(products);
+		
+		mockMvc.perform(get("/order/1/products"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect((jsonPath("$[0].productId", is(1))))
+				.andExpect((jsonPath("$[0].name", is("testing order bootstrap"))))
+				.andExpect((jsonPath("$[1].productId", is(2))))
+				.andExpect((jsonPath("$[1].name", is("testing order"))));
+	}
+
+	@Test
+	public void test_GetProducts_ReturnsCorrectStatusAndResponse_WhenGivenId10() throws Exception {
+		
+		mockMvc.perform(get("/order/10/products"))
+				.andExpect(status().isNotFound())
+				.andExpect(content().string("Order not found"));
+	}
+	
+	@Test
+	public void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenOrderId10() throws Exception {
+		
+		mockMvc.perform(get("/order/10/addproduct/1"))
+				.andExpect(status().isNotFound())
+				.andExpect(content().string("Order not found"));
+	}
+	
+	@Test
+	public void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenProductId10() throws Exception {
+		
+		Order order = new Order();
+		order.setOrderId(1L);
+		
+		when(service.findById(1L)).thenReturn(Optional.of(order));
+		
+		mockMvc.perform(get("/order/1/addproduct/10"))
+				.andExpect(status().isNotFound())
+				.andExpect(content().string("Product not found"));
+	}
+	
+	@Test
+	public void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenValidOrderAndProductIds() throws Exception {
+		
+		Order order = new Order();
+		order.setOrderId(1L);
+		
+		Product product = new Product();
+		product.setName("product");
+		
+		when(service.findById(1L)).thenReturn(Optional.of(order));
+		when(productService.findById(1L)).thenReturn(Optional.of(product));
+		
+		mockMvc.perform(get("/order/1/addproduct/1"))
+				.andExpect(status().isOk())
+				.andExpect(content().string("Product with id 1 added to Order with id 1"));
+	}
 
 }

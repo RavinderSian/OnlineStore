@@ -1,5 +1,6 @@
 package com.personal.onlinestore.controller;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -7,9 +8,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -24,7 +27,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.personal.onlinestore.model.Customer;
-import com.personal.onlinestore.repository.CustomerRepository;
+import com.personal.onlinestore.model.CustomerDTO;
+import com.personal.onlinestore.model.Order;
+import com.personal.onlinestore.services.CustomerService;
+import com.personal.onlinestore.services.OrderService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -37,10 +43,11 @@ class CustomerControllerTest {
 	CustomerController controller;
 	
 	@MockBean
-	CustomerRepository repository;
-	
-	public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+	CustomerService service;
 
+	@MockBean
+	OrderService orderService;
+	
 	@Test
 	public void test_Controller_IsNotNull() {
 		assertNotNull(controller);
@@ -54,7 +61,12 @@ class CustomerControllerTest {
 		customer.setFirstName("test");
 		customer.setLastName("testing");
 		
-		when(repository.findById(1L)).thenReturn(Optional.of(customer));
+		CustomerDTO customerDTO = new CustomerDTO();
+		customerDTO.setCustomerId(1L);
+		customerDTO.setFirstName("test");
+		customerDTO.setLastName("testing");
+		
+		when(service.findById(1L)).thenReturn(Optional.of(customerDTO));
 		
 		mockMvc.perform(get("/customer/1"))
 				.andExpect(status().isOk())
@@ -77,7 +89,12 @@ class CustomerControllerTest {
 		customer.setFirstName("test");
 		customer.setLastName("testing");
 		
-		when(repository.findById(1L)).thenReturn(Optional.of(customer));
+		CustomerDTO customerDTO = new CustomerDTO();
+		customerDTO.setCustomerId(1L);
+		customerDTO.setFirstName("test");
+		customerDTO.setLastName("testing");
+		
+		when(service.findById(1L)).thenReturn(Optional.of(customerDTO));
 		
 		mockMvc.perform(delete("/customer/delete/1"))
 				.andExpect(status().isOk())
@@ -102,14 +119,19 @@ class CustomerControllerTest {
 		customer.setCardNumber("379763005117730");
 		customer.setPostCode("UB1 1EP");
 		
-		when(repository.save(customer)).thenReturn(customer);
+		CustomerDTO customerDTO = new CustomerDTO();
+		customerDTO.setCustomerId(1L);
+		customerDTO.setFirstName("test");
+		customerDTO.setLastName("testing");
+		
+		when(service.saveAndReturnCustomerDTO(customer)).thenReturn(customerDTO);
 		
 		ObjectMapper mapper = new ObjectMapper();
 	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
 	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
 	    String requestJson = ow.writeValueAsString(customer);
 		
-		this.mockMvc.perform(post("/customer/save").contentType(APPLICATION_JSON_UTF8).content(requestJson))
+		this.mockMvc.perform(post("/customer/save").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
 		.andExpect(status().isOk())
 		.andExpect(content().json("{'customerId':1, 'firstName':'test', 'lastName':'testing'}"));
 	}
@@ -121,13 +143,14 @@ class CustomerControllerTest {
 		customer.setCustomerId(1L);
 		customer.setFirstName("test");
 		customer.setPostCode("UB1 1EP");
+		customer.setCardNumber("348768968933971");
 				
 		ObjectMapper mapper = new ObjectMapper();
 	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
 	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
 	    String requestJson = ow.writeValueAsString(customer);
 		
-		this.mockMvc.perform(post("/customer/save").contentType(APPLICATION_JSON_UTF8).content(requestJson))
+		this.mockMvc.perform(post("/customer/save").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
 		.andExpect(status().isBadRequest())
 		.andExpect(content().string("{\"lastName\":\"Please enter a valid last name\"}"));
 	}
@@ -142,14 +165,19 @@ class CustomerControllerTest {
 		customer.setCardNumber("379763005117730");
 		customer.setPostCode("UB1 1EP");
 		
-		when(repository.save(customer)).thenReturn(customer);
+		CustomerDTO customerDTO = new CustomerDTO();
+		customerDTO.setCustomerId(1L);
+		customerDTO.setFirstName("updated");
+		customerDTO.setLastName("tested");
+		
+		when(service.updateCustomerByCustomer(1L, customer)).thenReturn(customerDTO);
 		
 		ObjectMapper mapper = new ObjectMapper();
 	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
 	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
 	    String requestJson = ow.writeValueAsString(customer);
 		
-		this.mockMvc.perform(put("/customer/1/update").contentType(APPLICATION_JSON_UTF8).content(requestJson))
+		this.mockMvc.perform(put("/customer/1/update").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
 		.andExpect(status().isOk())
 		.andExpect(content().json("{'customerId':1, 'firstName':'updated', 'lastName':'tested'}"));
 	}
@@ -168,9 +196,92 @@ class CustomerControllerTest {
 	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
 	    String requestJson = ow.writeValueAsString(customer);
 		
-		this.mockMvc.perform(put("/customer/1/update").contentType(APPLICATION_JSON_UTF8).content(requestJson))
+		this.mockMvc.perform(put("/customer/1/update").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
 		.andExpect(status().isBadRequest())
 		.andExpect(content().string("{\"lastName\":\"Please enter a valid last name\"}"));
 	}
 
+	@Test
+	public void test_GetOrders_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
+		
+		Customer customer = new Customer();
+		customer.setFirstName("test");
+		customer.setLastName("testing");
+		customer.setCardNumber("379763005117730");
+		customer.setPostCode("UB1 1EP");
+		
+		CustomerDTO customerDTO = new CustomerDTO();
+		
+		Order order = new Order();
+		order.setOrderId(1L);
+		Order order2 = new Order();
+		order2.setOrderId(2L);
+		
+		List<Order> orders = new ArrayList<>();
+		orders.add(order);
+		orders.add(order2);
+		
+		when(service.findById(1L)).thenReturn(Optional.of(customerDTO));
+		when(service.findOrdersByCustomerId(1L)).thenReturn(orders);
+		
+		mockMvc.perform(get("/customer/1/orders"))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect((jsonPath("$[0].orderId", is(1))))
+				.andExpect((jsonPath("$[1].orderId", is(2))));
+	}
+
+	@Test
+	public void test_GetOrders_ReturnsCorrectStatusAndResponse_WhenGivenId10() throws Exception {
+		
+		mockMvc.perform(get("/customer/10/orders"))
+				.andExpect(status().isNotFound())
+				.andExpect(content().string("Customer not found"));
+	}
+	
+	@Test
+	public void test_AddOrder_ReturnsCorrectStatusAndResponse_WhenGivenCustomerId10() throws Exception {
+		
+		mockMvc.perform(get("/customer/10/addorder/1"))
+				.andExpect(status().isNotFound())
+				.andExpect(content().string("Customer not found"));
+	}
+	
+	@Test
+	public void test_AddOrder_ReturnsCorrectStatusAndResponse_WhenGivenOrderId10() throws Exception {
+		
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("test");
+		customer.setLastName("testing");
+		customer.setCardNumber("379763005117730");
+		customer.setPostCode("UB1 1EP");
+		
+		when(service.findCustomerById(1L)).thenReturn(Optional.of(customer));
+		
+		mockMvc.perform(get("/customer/1/addorder/10"))
+				.andExpect(status().isNotFound())
+				.andExpect(content().string("Order not found"));
+	}
+	
+	@Test
+	public void test_AddOrder_ReturnsCorrectStatusAndResponse_WhenGivenValidCustomerAndOrderIds() throws Exception {
+		
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("test");
+		customer.setLastName("testing");
+		customer.setCardNumber("379763005117730");
+		customer.setPostCode("UB1 1EP");
+		
+		Order order = new Order();
+		order.setOrderId(1L);
+		
+		when(service.findCustomerById(1L)).thenReturn(Optional.of(customer));
+		when(orderService.findById(1L)).thenReturn(Optional.of(order));
+		
+		mockMvc.perform(get("/customer/1/addorder/1"))
+				.andExpect(status().isOk())
+				.andExpect(content().string("Order with id 1 added to Customer with id 1"));
+	}
 }
