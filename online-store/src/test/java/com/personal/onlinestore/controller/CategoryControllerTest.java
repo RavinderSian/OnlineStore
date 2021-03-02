@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.personal.onlinestore.model.Category;
 import com.personal.onlinestore.model.Product;
 import com.personal.onlinestore.services.CategoryService;
+import com.personal.onlinestore.services.ProductService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -42,6 +43,9 @@ public class CategoryControllerTest {
 	
 	@MockBean
 	CategoryService service;
+	
+	@MockBean
+	ProductService productService;
 	
 	@Test
 	public void test_Controller_IsNotNull() {
@@ -185,6 +189,46 @@ public class CategoryControllerTest {
 		mockMvc.perform(get("/category/10/products"))
 				.andExpect(status().isNotFound())
 				.andExpect(content().string("Category not found"));
+	}
+	
+	@Test
+	public void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenCategoryId10() throws Exception {
+		
+		mockMvc.perform(get("/category/10/addproduct/1"))
+				.andExpect(status().isNotFound())
+				.andExpect(content().string("Category not found"));
+	}
+	
+	@Test
+	public void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenProductId10() throws Exception {
+		
+		Category category = new Category();
+		category.setCategoryId(1L);
+		category.setName("test");
+		
+		when(service.findById(1L)).thenReturn(Optional.of(category));
+		
+		mockMvc.perform(get("/category/1/addproduct/10"))
+				.andExpect(status().isNotFound())
+				.andExpect(content().string("Product not found"));
+	}
+	
+	@Test
+	public void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenValidCategoryAndProductIds() throws Exception {
+		
+		Category category = new Category();
+		category.setCategoryId(1L);
+		category.setName("test");
+		
+		Product product = new Product();
+		product.setName("product");
+		
+		when(service.findById(1L)).thenReturn(Optional.of(category));
+		when(productService.findById(1L)).thenReturn(Optional.of(product));
+		
+		mockMvc.perform(get("/category/1/addproduct/1"))
+				.andExpect(status().isOk())
+				.andExpect(content().string("Product with id 1 added to Category with id 1"));
 	}
 
 }

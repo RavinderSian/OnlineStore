@@ -14,15 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.personal.onlinestore.model.Order;
 import com.personal.onlinestore.model.Product;
 import com.personal.onlinestore.services.OrderService;
+import com.personal.onlinestore.services.ProductService;
 
 @RestController
 @RequestMapping("/order")
 public class OrderController implements CrudController<Order, Long>{
 
 	private final OrderService orderService;
+	private final ProductService productService;
 
-	public OrderController(OrderService orderService) {
+	public OrderController(OrderService orderService, ProductService productService) {
 		this.orderService = orderService;
+		this.productService = productService;
 	}
 
 	@Override
@@ -59,6 +62,26 @@ public class OrderController implements CrudController<Order, Long>{
 			return new ResponseEntity<String>("Order not found", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<List<Product>>(orderService.findProductsByOrderId(id), HttpStatus.OK);
+	}
+	
+	@GetMapping("/{id}/addproduct/{productId}")
+	public ResponseEntity<?> addProducts(@PathVariable Long id, @PathVariable Long productId){
+		Optional<Order> orderOptional = orderService.findById(id);
+		if (orderOptional.isEmpty()) {
+			return new ResponseEntity<String>("Order not found", HttpStatus.NOT_FOUND);
+		}
+		
+		Optional<Product> productOptional = productService.findById(productId);
+		if (productOptional.isEmpty()) {
+			return new ResponseEntity<String>("Product not found", HttpStatus.NOT_FOUND);
+		}
+		
+		Order order = orderOptional.get();
+		Product product = productOptional.get();
+		order.addProduct(product);
+		orderService.save(order);
+		
+		return new ResponseEntity<String>("Product with id " + productId + " added to Order with id " + id, HttpStatus.OK);
 	}
 	
 }

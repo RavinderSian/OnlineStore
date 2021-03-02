@@ -151,6 +151,32 @@ class CustomerServiceImplTest {
 		assertEquals(customerDTOOptional, Optional.empty());
 	}
 	
+	
+	@Test
+	public void test_FindCustomerById_ReturnsCorrectCustomerOptional_WhenCalledWithId1() {
+		//Arrange
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("test");
+		customer.setLastName("testing");
+		customer.setCardNumber("379763005117730");
+		customer.setPostCode("UB1 1EP");
+		when(mockRepository.findById(1L)).thenReturn(Optional.of(customer));
+		//Act
+		Optional<Customer> customerOptional = customerService.findCustomerById(1L);
+		//Assert
+		assertEquals(customerOptional.get(), customer);
+
+	}
+	
+	@Test
+	public void test_FindCustomerById_ReturnsEmptyOptional_WhenCalledWithId10() {
+		//Act
+		Optional<Customer> customerOptional = customerService.findCustomerById(10L);
+		//Assert
+		assertEquals(customerOptional, Optional.empty());
+	}
+	
 	@Test
 	public void test_updateCustomerByCustomer_ReturnsCustomerDTOWithCorrectInfo_WhenGivenCustomerWithCorrectInfoButNoId() {
 		//Arrange

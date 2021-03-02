@@ -28,6 +28,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.personal.onlinestore.model.Order;
 import com.personal.onlinestore.model.Product;
 import com.personal.onlinestore.services.OrderService;
+import com.personal.onlinestore.services.ProductService;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -41,6 +42,9 @@ public class OrderControllerTest {
 	
 	@MockBean
 	OrderService service;
+	
+	@MockBean
+	ProductService productService;
 	
 	@Test
 	public void test_Controller_IsNotNull() {
@@ -141,6 +145,44 @@ public class OrderControllerTest {
 		mockMvc.perform(get("/order/10/products"))
 				.andExpect(status().isNotFound())
 				.andExpect(content().string("Order not found"));
+	}
+	
+	@Test
+	public void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenOrderId10() throws Exception {
+		
+		mockMvc.perform(get("/order/10/addproduct/1"))
+				.andExpect(status().isNotFound())
+				.andExpect(content().string("Order not found"));
+	}
+	
+	@Test
+	public void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenProductId10() throws Exception {
+		
+		Order order = new Order();
+		order.setOrderId(1L);
+		
+		when(service.findById(1L)).thenReturn(Optional.of(order));
+		
+		mockMvc.perform(get("/order/1/addproduct/10"))
+				.andExpect(status().isNotFound())
+				.andExpect(content().string("Product not found"));
+	}
+	
+	@Test
+	public void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenValidOrderAndProductIds() throws Exception {
+		
+		Order order = new Order();
+		order.setOrderId(1L);
+		
+		Product product = new Product();
+		product.setName("product");
+		
+		when(service.findById(1L)).thenReturn(Optional.of(order));
+		when(productService.findById(1L)).thenReturn(Optional.of(product));
+		
+		mockMvc.perform(get("/order/1/addproduct/1"))
+				.andExpect(status().isOk())
+				.andExpect(content().string("Product with id 1 added to Order with id 1"));
 	}
 
 }

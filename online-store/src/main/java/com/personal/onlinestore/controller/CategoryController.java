@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.personal.onlinestore.model.Category;
@@ -94,14 +93,23 @@ public class CategoryController implements CrudController<Category, Long> {
 	}
 	
 	@GetMapping("/{id}/addproduct/{productId}")
-	public ResponseEntity<?> addProducts(@PathVariable Long id, @RequestParam(value = "productId") Long productId){
+	public ResponseEntity<?> addProducts(@PathVariable Long id, @PathVariable Long productId){
 		Optional<Category> categoryOptional = categoryService.findById(id);
 		if (categoryOptional.isEmpty()) {
 			return new ResponseEntity<String>("Category not found", HttpStatus.NOT_FOUND);
 		}
 		
-		return null;
-		 
+		Optional<Product> productOptional = productService.findById(productId);
+		if (productOptional.isEmpty()) {
+			return new ResponseEntity<String>("Product not found", HttpStatus.NOT_FOUND);
+		}
+		
+		Category category = categoryOptional.get();
+		Product product = productOptional.get();
+		category.addProduct(product);
+		categoryService.save(category);
+		
+		return new ResponseEntity<String>("Product with id " + productId + " added to Category with id " + id, HttpStatus.OK);
 	}
 
 }

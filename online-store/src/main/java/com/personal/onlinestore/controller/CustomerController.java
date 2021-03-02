@@ -21,15 +21,18 @@ import com.personal.onlinestore.model.Customer;
 import com.personal.onlinestore.model.CustomerDTO;
 import com.personal.onlinestore.model.Order;
 import com.personal.onlinestore.services.CustomerService;
+import com.personal.onlinestore.services.OrderService;
 
 @RestController
 @RequestMapping("/customer")
 public class CustomerController implements CrudController<Customer, Long>{
 
 	private final CustomerService customerService;
+	private final OrderService orderService;
 
-	public CustomerController(CustomerService customerService) {
+	public CustomerController(CustomerService customerService, OrderService orderService) {
 		this.customerService = customerService;
+		this.orderService = orderService;
 	}
 
 	@Override
@@ -92,6 +95,26 @@ public class CustomerController implements CrudController<Customer, Long>{
 		}
 		return new ResponseEntity<List<Order>>(customerService.findOrdersByCustomerId(id), HttpStatus.OK);
 		 
+	}
+	
+	@GetMapping("/{id}/addorder/{orderId}")
+	public ResponseEntity<?> addProducts(@PathVariable Long id, @PathVariable Long orderId){
+		Optional<Customer> customerOptional = customerService.findCustomerById(id);
+		if (customerOptional.isEmpty()) {
+			return new ResponseEntity<String>("Customer not found", HttpStatus.NOT_FOUND);
+		}
+		
+		Optional<Order> orderOptional = orderService.findById(orderId);
+		if (orderOptional.isEmpty()) {
+			return new ResponseEntity<String>("Order not found", HttpStatus.NOT_FOUND);
+		}
+		
+		Customer customer = customerOptional.get();
+		Order order = orderOptional.get();
+		customer.addOrder(order);
+		customerService.saveAndReturnCustomerDTO(customer);
+		
+		return new ResponseEntity<String>("Order with id " + orderId + " added to Customer with id " + id, HttpStatus.OK);
 	}
 	
 }

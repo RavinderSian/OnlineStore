@@ -40,7 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public Optional<CustomerDTO> findById(Long id) {
-		Optional<Customer> customerOptional = repository.findById(id);
+		Optional<Customer> customerOptional = findCustomerById(id);
 		if (!customerOptional.isPresent()) {
 			return Optional.empty();
 		}
@@ -63,6 +63,16 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public List<Order> findOrdersByCustomerId(Long id) {
 		return orderRepository.findOrdersByCustomer_CustomerId(id);
+	}
+
+	@Override
+	public Optional<Customer> findCustomerById(Long id) {
+		Optional<Customer> customerOptional = repository.findById(id);
+		if (!customerOptional.isPresent()) {
+			return Optional.empty();
+		}
+		
+		return customerOptional;
 	}
 
 }
