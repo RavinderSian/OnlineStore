@@ -15,6 +15,7 @@ import javax.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.CreditCardNumber;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.istack.NotNull;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
