@@ -35,7 +35,7 @@ public class CategoryController implements CrudController<Category, Long> {
 	@Override
 	public ResponseEntity<?> getById(Long id) {
 		Optional<Category> categoryOptional = categoryService.findById(id);
-		if (categoryOptional.isEmpty()) {
+		if (!categoryOptional.isPresent()) {
 			return new ResponseEntity<String>("Category not found", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<Category>(categoryOptional.get(), HttpStatus.OK);
@@ -45,7 +45,7 @@ public class CategoryController implements CrudController<Category, Long> {
 	@Override
 	public ResponseEntity<String> deleteById(Long id) {
 		Optional<Category> categoryOptional = categoryService.findById(id);
-		if (categoryOptional.isEmpty()) {
+		if (!categoryOptional.isPresent()) {
 			return new ResponseEntity<String>("Category not found", HttpStatus.NOT_FOUND);
 		}
 		Category category = categoryOptional.get();
@@ -73,7 +73,7 @@ public class CategoryController implements CrudController<Category, Long> {
 	@PatchMapping("/updatename/{id}")
 	public ResponseEntity<?> updateName(@PathVariable Long id, @RequestBody String name){
 		Optional<Category> categoryOptional = categoryService.findById(id);
-		if (categoryOptional.isEmpty()) {
+		if (!categoryOptional.isPresent()) {
 			return new ResponseEntity<String>("Category not found", HttpStatus.NOT_FOUND);
 		}
 		Category category = categoryOptional.get();
@@ -84,7 +84,7 @@ public class CategoryController implements CrudController<Category, Long> {
 	@GetMapping("/{id}/products")
 	public ResponseEntity<?> getProducts(@PathVariable Long id){
 		Optional<Category> categoryOptional = categoryService.findById(id);
-		if (categoryOptional.isEmpty()) {
+		if (!categoryOptional.isPresent()) {
 			return new ResponseEntity<String>("Category not found", HttpStatus.NOT_FOUND);
 		}
 		
@@ -95,12 +95,12 @@ public class CategoryController implements CrudController<Category, Long> {
 	@GetMapping("/{id}/addproduct/{productId}")
 	public ResponseEntity<?> addProducts(@PathVariable Long id, @PathVariable Long productId){
 		Optional<Category> categoryOptional = categoryService.findById(id);
-		if (categoryOptional.isEmpty()) {
+		if (!categoryOptional.isPresent()) {
 			return new ResponseEntity<String>("Category not found", HttpStatus.NOT_FOUND);
 		}
 		
 		Optional<Product> productOptional = productService.findById(productId);
-		if (productOptional.isEmpty()) {
+		if (!productOptional.isPresent()) {
 			return new ResponseEntity<String>("Product not found", HttpStatus.NOT_FOUND);
 		}
 		
