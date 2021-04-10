@@ -3,7 +3,6 @@ package com.personal.onlinestore.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -37,22 +36,18 @@ public class CustomerController implements CrudController<Customer, Long>{
 
 	@Override
 	public ResponseEntity<?> getById(Long id) {
-		Optional<CustomerDTO> customerDTOOptional = customerService.findById(id);
-		
-		if (customerDTOOptional.isEmpty()) {
-			return new ResponseEntity<String>("Customer not found", HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<CustomerDTO>(customerDTOOptional.get(), HttpStatus.OK);
+		return customerService.findById(id).isPresent()
+		? new ResponseEntity<CustomerDTO>(customerService.findById(id).get(), HttpStatus.OK)
+		: new ResponseEntity<String>("Customer not found", HttpStatus.NOT_FOUND);
 	}
 
 	@Override
 	public ResponseEntity<String> deleteById(Long id) {
-		if (customerService.findById(id).isEmpty()) {
-			return new ResponseEntity<String>("Customer not found", HttpStatus.NOT_FOUND);
+		if (customerService.findById(id).isPresent()) {
+			customerService.deleteById(id);
+			return new ResponseEntity<String>("Customer with id " + id + " deleted", HttpStatus.OK);
 		}
-		
-		customerService.deleteById(id);
-		return new ResponseEntity<String>("Customer with id " + id + " deleted", HttpStatus.OK);
+		return new ResponseEntity<String>("Customer not found", HttpStatus.NOT_FOUND);
 	}
 
 	@Override
@@ -89,31 +84,25 @@ public class CustomerController implements CrudController<Customer, Long>{
 	
 	@GetMapping("/{id}/orders")
 	public ResponseEntity<?> getOrders(@PathVariable Long id){
-		Optional<CustomerDTO> customerDTOOptional = customerService.findById(id);
-		if (customerDTOOptional.isEmpty()) {
-			return new ResponseEntity<String>("Customer not found", HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<List<Order>>(customerService.findOrdersByCustomerId(id), HttpStatus.OK);
-		 
+		
+		return customerService.findById(id).isPresent()
+		? new ResponseEntity<List<Order>>(customerService.findOrdersByCustomerId(id), HttpStatus.OK)
+		: new ResponseEntity<String>("Customer not found", HttpStatus.NOT_FOUND);
 	}
 	
 	@GetMapping("/{id}/addorder/{orderId}")
 	public ResponseEntity<?> addProducts(@PathVariable Long id, @PathVariable Long orderId){
-		Optional<Customer> customerOptional = customerService.findCustomerById(id);
-		if (customerOptional.isEmpty()) {
+		if (!customerService.findCustomerById(id).isPresent()) {
 			return new ResponseEntity<String>("Customer not found", HttpStatus.NOT_FOUND);
 		}
 		
-		Optional<Order> orderOptional = orderService.findById(orderId);
-		if (orderOptional.isEmpty()) {
+		if (!orderService.findById(orderId).isPresent()) {
 			return new ResponseEntity<String>("Order not found", HttpStatus.NOT_FOUND);
 		}
 		
-		Customer customer = customerOptional.get();
-		Order order = orderOptional.get();
-		customer.addOrder(order);
+		Customer customer = customerService.findCustomerById(id).get();
+		customer.addOrder(orderService.findById(orderId).get());
 		customerService.saveAndReturnCustomerDTO(customer);
-		
 		return new ResponseEntity<String>("Order with id " + orderId + " added to Customer with id " + id, HttpStatus.OK);
 	}
 	

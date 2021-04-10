@@ -1,7 +1,6 @@
 package com.personal.onlinestore.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,57 +29,46 @@ public class OrderController implements CrudController<Order, Long>{
 
 	@Override
 	public ResponseEntity<?> getById(Long id) {
-		Optional<Order> orderOptional = orderService.findById(id);
-		if (orderOptional.isEmpty()) {
-			return new ResponseEntity<String>("Order not found", HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<Order>(orderOptional.get(), HttpStatus.OK);
+		return orderService.findById(id).isPresent()
+		? new ResponseEntity<Order>(orderService.findById(id).get(), HttpStatus.OK)
+		: new ResponseEntity<String>("Order not found", HttpStatus.NOT_FOUND);
 	}
 
 	@Override
 	public ResponseEntity<String> deleteById(Long id) {
-		
-		Optional<Order> orderOptional = orderService.findById(id);
-		if (orderOptional.isEmpty()) {
-			return new ResponseEntity<String>("Order not found", HttpStatus.NOT_FOUND);
+		if (orderService.findById(id).isPresent()) {
+			Order order = orderService.findById(id).get();
+			orderService.delete(order);
+			return new ResponseEntity<String>("Order with id " + id + " deleted", HttpStatus.OK);
 		}
-		Order order = orderOptional.get();
-		orderService.delete(order);
-		return new ResponseEntity<String>("Order with id " + id + " deleted", HttpStatus.OK);
+		return new ResponseEntity<String>("Order not found", HttpStatus.NOT_FOUND);
 	}
 
 	@Override
 	public ResponseEntity<?> save(Order order, BindingResult bindingResult) {
-		Order savedOrder = orderService.save(order);
-		return new ResponseEntity<Order>(savedOrder, HttpStatus.OK);
+		return new ResponseEntity<Order>(orderService.save(order), HttpStatus.OK);
 	}
 	
 	@GetMapping("/{id}/products")
 	public ResponseEntity<?> getProductsForOrder(@PathVariable Long id){
-		Optional<Order> orderOptional = orderService.findById(id);
-		if (orderOptional.isEmpty()) {
-			return new ResponseEntity<String>("Order not found", HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<List<Product>>(orderService.findProductsByOrderId(id), HttpStatus.OK);
+		return orderService.findById(id).isPresent() 
+		? new ResponseEntity<List<Product>>(orderService.findProductsByOrderId(id), HttpStatus.OK)
+		: new ResponseEntity<String>("Order not found", HttpStatus.NOT_FOUND);
 	}
 	
 	@GetMapping("/{id}/addproduct/{productId}")
 	public ResponseEntity<?> addProducts(@PathVariable Long id, @PathVariable Long productId){
-		Optional<Order> orderOptional = orderService.findById(id);
-		if (orderOptional.isEmpty()) {
+		if (!orderService.findById(id).isPresent()) {
 			return new ResponseEntity<String>("Order not found", HttpStatus.NOT_FOUND);
 		}
 		
-		Optional<Product> productOptional = productService.findById(productId);
-		if (productOptional.isEmpty()) {
+		if (!productService.findById(productId).isPresent()) {
 			return new ResponseEntity<String>("Product not found", HttpStatus.NOT_FOUND);
 		}
 		
-		Order order = orderOptional.get();
-		Product product = productOptional.get();
-		order.addProduct(product);
+		Order order = orderService.findById(id).get();
+		order.addProduct(productService.findById(productId).get());
 		orderService.save(order);
-		
 		return new ResponseEntity<String>("Product with id " + productId + " added to Order with id " + id, HttpStatus.OK);
 	}
 	

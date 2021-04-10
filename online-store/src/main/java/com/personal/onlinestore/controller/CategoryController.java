@@ -1,4 +1,4 @@
-package com.personal.onlinestore.controller;
+ package com.personal.onlinestore.controller;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,22 +34,17 @@ public class CategoryController implements CrudController<Category, Long> {
 
 	@Override
 	public ResponseEntity<?> getById(Long id) {
-		Optional<Category> categoryOptional = categoryService.findById(id);
-		if (!categoryOptional.isPresent()) {
-			return new ResponseEntity<String>("Category not found", HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<Category>(categoryOptional.get(), HttpStatus.OK);
-		
-	}	
+		return categoryService.findById(id).isPresent()
+		? new ResponseEntity<Category>(categoryService.findById(id).get(), HttpStatus.OK)
+		: new ResponseEntity<String>("Category not found", HttpStatus.NOT_FOUND);
+	}
 
 	@Override
 	public ResponseEntity<String> deleteById(Long id) {
-		Optional<Category> categoryOptional = categoryService.findById(id);
-		if (!categoryOptional.isPresent()) {
+		if (!categoryService.findById(id).isPresent()) {
 			return new ResponseEntity<String>("Category not found", HttpStatus.NOT_FOUND);
 		}
-		Category category = categoryOptional.get();
-		categoryService.delete(category);
+		categoryService.delete(categoryService.findById(id).get());
 		return new ResponseEntity<String>("Category with id " + id + " deleted", HttpStatus.OK);
 	}
 
@@ -66,8 +61,7 @@ public class CategoryController implements CrudController<Category, Long> {
 			return new ResponseEntity<Map<String, String>>(fieldErrorMap, HttpStatus.BAD_REQUEST);
 		}
 		
-		Category savedCategory = categoryService.save(category);
-		return new ResponseEntity<Category>(savedCategory, HttpStatus.OK);
+		return new ResponseEntity<Category>(categoryService.save(category), HttpStatus.OK);
 	}
 	
 	@PatchMapping("/updatename/{id}")
@@ -83,30 +77,22 @@ public class CategoryController implements CrudController<Category, Long> {
 	
 	@GetMapping("/{id}/products")
 	public ResponseEntity<?> getProducts(@PathVariable Long id){
-		Optional<Category> categoryOptional = categoryService.findById(id);
-		if (!categoryOptional.isPresent()) {
-			return new ResponseEntity<String>("Category not found", HttpStatus.NOT_FOUND);
-		}
-		
-		return new ResponseEntity<List<Product>>(categoryService.findProductsByCategoryId(id), HttpStatus.OK);
-		 
+		return categoryService.findById(id).isPresent()
+		? new ResponseEntity<List<Product>>(categoryService.findProductsByCategoryId(id), HttpStatus.OK)
+		: new ResponseEntity<String>("Category not found", HttpStatus.NOT_FOUND);
 	}
 	
 	@GetMapping("/{id}/addproduct/{productId}")
 	public ResponseEntity<?> addProducts(@PathVariable Long id, @PathVariable Long productId){
-		Optional<Category> categoryOptional = categoryService.findById(id);
-		if (!categoryOptional.isPresent()) {
+		if (!categoryService.findById(id).isPresent()) {
 			return new ResponseEntity<String>("Category not found", HttpStatus.NOT_FOUND);
 		}
 		
-		Optional<Product> productOptional = productService.findById(productId);
-		if (!productOptional.isPresent()) {
+		if (!productService.findById(productId).isPresent()) {
 			return new ResponseEntity<String>("Product not found", HttpStatus.NOT_FOUND);
 		}
-		
-		Category category = categoryOptional.get();
-		Product product = productOptional.get();
-		category.addProduct(product);
+		Category category = categoryService.findById(id).get();
+		category.addProduct(productService.findById(productId).get());
 		categoryService.save(category);
 		
 		return new ResponseEntity<String>("Product with id " + productId + " added to Category with id " + id, HttpStatus.OK);

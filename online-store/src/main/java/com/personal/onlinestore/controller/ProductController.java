@@ -28,22 +28,18 @@ public class ProductController implements CrudController<Product, Long>{
 
 	@Override
 	public ResponseEntity<?> getById(Long id) {
-		Optional<Product> productOptional = productService.findById(id);
-		if (productOptional.isEmpty()) {
-			return new ResponseEntity<String>("Product not found", HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<Product>(productOptional.get(), HttpStatus.OK);
+		return productService.findById(id).isPresent()
+		? new ResponseEntity<Product>(productService.findById(id).get(), HttpStatus.OK)
+		: new ResponseEntity<String>("Product not found", HttpStatus.NOT_FOUND);
 	}
 
 	@Override
 	public ResponseEntity<String> deleteById(Long id) {
-		Optional<Product> productOptional = productService.findById(id);
-		if (productOptional.isEmpty()) {
-			return new ResponseEntity<String>("Product not found", HttpStatus.NOT_FOUND);
+		if (productService.findById(id).isPresent()) {
+			productService.delete(productService.findById(id).get());
+			return new ResponseEntity<String>("Product with id " + id + " deleted", HttpStatus.OK);
 		}
-		Product product = productOptional.get();
-		productService.delete(product);
-		return new ResponseEntity<String>("Product with id " + id + " deleted", HttpStatus.OK);
+		return new ResponseEntity<String>("Product not found", HttpStatus.NOT_FOUND);
 	}
 
 	@Override
@@ -58,19 +54,18 @@ public class ProductController implements CrudController<Product, Long>{
 			
 			return new ResponseEntity<Map<String, String>>(fieldErrorMap, HttpStatus.BAD_REQUEST);
 		}
-		Product savedProduct = productService.save(product);
-		return new ResponseEntity<Product>(savedProduct, HttpStatus.OK);
+		return new ResponseEntity<Product>(productService.save(product), HttpStatus.OK);
 	}
 	
 	@PatchMapping("/updatename/{id}")
 	public ResponseEntity<?> updateName(@PathVariable Long id, @RequestBody String name){
 		Optional<Product> productOptional = productService.findById(id);
-		if (productOptional.isEmpty()) {
-			return new ResponseEntity<String>("Product not found", HttpStatus.NOT_FOUND);
+		if (productOptional.isPresent()) {
+			Product product = productOptional.get();
+			productService.updateName(product, name);
+			return new ResponseEntity<Product>(product, HttpStatus.OK);
 		}
-		Product product = productOptional.get();
-		productService.updateName(product, name);
-		return new ResponseEntity<Product>(product, HttpStatus.OK);
+		return new ResponseEntity<String>("Product not found", HttpStatus.NOT_FOUND);
 		
 	}
 	
