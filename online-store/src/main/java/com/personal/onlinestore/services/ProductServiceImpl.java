@@ -26,17 +26,13 @@ public class ProductServiceImpl implements ProductService {
 		product.setCategory(null);
 		product.setOrder(null);
 		repository.delete(product);
-
 	}
 
 	@Override
 	public Optional<Product> findById(Long id) {
-		Optional<Product> productOptional = repository.findById(id);
-		if (!productOptional.isPresent()) {
-			return Optional.empty();
-		}
-		
-		return productOptional;
+		return repository.findById(id).isPresent()
+		? repository.findById(id)
+		: Optional.empty();
 	}
 
 	@Override

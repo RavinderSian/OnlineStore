@@ -27,37 +27,26 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public CustomerDTO saveAndReturnCustomerDTO(Customer customer) {
-		Customer savedCustomer = repository.save(customer);
-		return mapper.map(savedCustomer, CustomerDTO.class);
-		
+		return mapper.map(repository.save(customer), CustomerDTO.class);
 	}
 
 	@Override
 	public void deleteById(Long id) {
 		repository.deleteById(id);
-		
 	}
 
 	@Override
 	public Optional<CustomerDTO> findById(Long id) {
-		Optional<Customer> customerOptional = findCustomerById(id);
-		if (!customerOptional.isPresent()) {
-			return Optional.empty();
-		}
-		
-		CustomerDTO customerDTO = mapper.map(customerOptional.get(), CustomerDTO.class);
-		return Optional.of(customerDTO);
+		return findCustomerById(id).isPresent()
+		? Optional.of(mapper.map(findCustomerById(id).get(), CustomerDTO.class))
+		: Optional.empty();
 	}
 
 	@Override
 	public CustomerDTO updateCustomerByCustomer(Long id, Customer customer) {
 		
 		customer.setCustomerId(id);
-		
-		Customer savedCustomer = repository.save(customer);
-		
-		return mapper.map(savedCustomer, CustomerDTO.class);
-		
+		return mapper.map(repository.save(customer), CustomerDTO.class);
 	}
 
 	@Override
@@ -67,12 +56,9 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public Optional<Customer> findCustomerById(Long id) {
-		Optional<Customer> customerOptional = repository.findById(id);
-		if (!customerOptional.isPresent()) {
-			return Optional.empty();
-		}
-		
-		return customerOptional;
+		return repository.findById(id).isPresent()
+		? repository.findById(id)
+		: Optional.empty();
 	}
 
 }
