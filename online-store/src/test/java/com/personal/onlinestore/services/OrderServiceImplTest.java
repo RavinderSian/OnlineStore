@@ -58,10 +58,8 @@ class OrderServiceImplTest {
 	public void test_Save_ReturnsCorrectOrder_WhenGivenOrderMock() {
 		//Arrange
 		when(mockRepository.save(mockOrder)).thenReturn(mockOrder);
-		//Act
-		Order savedOrder = orderService.save(mockOrder);
 		//Assert
-		assertEquals(savedOrder, mockOrder);
+		assertEquals(orderService.save(mockOrder), mockOrder);
 	}
 	
 	@Test
@@ -111,18 +109,14 @@ class OrderServiceImplTest {
 	public void test_FindById_ReturnsCorrectOrderOptional_WhenCalledWithId1() {
 		//Arrange
 		when(mockRepository.findById(1L)).thenReturn(Optional.of(mockOrder));
-		//Act
-		Optional<Order> orderOptional = orderService.findById(1L);
 		//Assert
-		assertEquals(orderOptional, Optional.of(mockOrder));
+		assertEquals(orderService.findById(1L), Optional.of(mockOrder));
 	}
 	
 	@Test
 	public void test_FindById_ReturnsEmptyOptional_WhenCalledWithId10() {
-		//Act
-		Optional<Order> orderOptional = orderService.findById(10L);
 		//Assert
-		assertEquals(orderOptional, Optional.empty());
+		assertEquals(orderService.findById(10L), Optional.empty());
 	}
 	
 	@Test
@@ -138,20 +132,16 @@ class OrderServiceImplTest {
 		products.add(product2);
 		
 		when(productRepositoryMock.findProductsByOrder_OrderId(1L)).thenReturn(products);
-		//Act
-		List<Product> productsForOrder = orderService.findProductsByOrderId(1L);
 		//Assert
-		assertEquals(product, productsForOrder.get(0));
-		assertEquals(product2, productsForOrder.get(1));
-		assertEquals(2, productsForOrder.size());
+		assertEquals(product, orderService.findProductsByOrderId(1L).get(0));
+		assertEquals(product2, orderService.findProductsByOrderId(1L).get(1));
+		assertEquals(2, orderService.findProductsByOrderId(1L).size());
 	}
 	
 	@Test
 	public void test_FindProductsByOrderId_ReturnsEmptyList_WhenCalledWithId10() {
-		//Act
-		List<Product> productsForOrder = orderService.findProductsByOrderId(10L);
 		//Assert
-		assertEquals(0, productsForOrder.size());
+		assertEquals(0, orderService.findProductsByOrderId(10L).size());
 	}
 
 }

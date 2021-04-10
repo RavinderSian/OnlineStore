@@ -56,7 +56,6 @@ class CustomerServiceImplTest {
 	
 	@Test
 	public void test_FieldValidation_Gives4Violations_WhenGivenCustomerWithInvalidCardNumberAndAllOtherAttributesEmpty() {
-		
 		Customer customer = new Customer();
 		customer.setCardNumber("1");
 		assertEquals(4, validator.validate(customer).size());
@@ -135,20 +134,16 @@ class CustomerServiceImplTest {
 		customer.setCardNumber("379763005117730");
 		customer.setPostCode("UB1 1EP");
 		when(mockRepository.findById(1L)).thenReturn(Optional.of(customer));
-		//Act
-		Optional<CustomerDTO> customerDTOOptional = customerService.findById(1L);
 		//Assert
-		assertEquals(customerDTOOptional.get().getCustomerId(), customer.getCustomerId());
-		assertEquals(customerDTOOptional.get().getFirstName(), customer.getFirstName());
-		assertEquals(customerDTOOptional.get().getLastName(), customer.getLastName());
+		assertEquals(customerService.findById(1L).get().getCustomerId(), customer.getCustomerId());
+		assertEquals(customerService.findById(1L).get().getFirstName(), customer.getFirstName());
+		assertEquals(customerService.findById(1L).get().getLastName(), customer.getLastName());
 	}
 	
 	@Test
 	public void test_FindById_ReturnsEmptyOptional_WhenCalledWithId10() {
-		//Act
-		Optional<CustomerDTO> customerDTOOptional = customerService.findById(10L);
 		//Assert
-		assertEquals(customerDTOOptional, Optional.empty());
+		assertEquals(customerService.findById(10L), Optional.empty());
 	}
 	
 	
@@ -162,19 +157,15 @@ class CustomerServiceImplTest {
 		customer.setCardNumber("379763005117730");
 		customer.setPostCode("UB1 1EP");
 		when(mockRepository.findById(1L)).thenReturn(Optional.of(customer));
-		//Act
-		Optional<Customer> customerOptional = customerService.findCustomerById(1L);
 		//Assert
-		assertEquals(customerOptional.get(), customer);
+		assertEquals(customerService.findCustomerById(1L).get(), customer);
 
 	}
 	
 	@Test
 	public void test_FindCustomerById_ReturnsEmptyOptional_WhenCalledWithId10() {
-		//Act
-		Optional<Customer> customerOptional = customerService.findCustomerById(10L);
 		//Assert
-		assertEquals(customerOptional, Optional.empty());
+		assertEquals(customerService.findCustomerById(10L), Optional.empty());
 	}
 	
 	@Test
@@ -227,20 +218,16 @@ class CustomerServiceImplTest {
 		orders.add(order2);
 		
 		when(orderRepositoryMock.findOrdersByCustomer_CustomerId(1L)).thenReturn(orders);
-		//Act
-		List<Order> ordersForCustomer = customerService.findOrdersByCustomerId(1L);
 		//Assert
-		assertEquals(order, ordersForCustomer.get(0));
-		assertEquals(order2, ordersForCustomer.get(1));
-		assertEquals(2, ordersForCustomer.size());
+		assertEquals(order, customerService.findOrdersByCustomerId(1L).get(0));
+		assertEquals(order2, customerService.findOrdersByCustomerId(1L).get(1));
+		assertEquals(2, customerService.findOrdersByCustomerId(1L).size());
 	}
 	
 	@Test
 	public void test_FindOrdersByCustomerId_ReturnsEmptyList_WhenCalledWithId10() {
-		//Act
-		List<Order> ordersForCustomer = customerService.findOrdersByCustomerId(1L);
 		//Assert
-		assertEquals(0, ordersForCustomer.size());
+		assertEquals(0, customerService.findOrdersByCustomerId(1L).size());
 	}
 
 }

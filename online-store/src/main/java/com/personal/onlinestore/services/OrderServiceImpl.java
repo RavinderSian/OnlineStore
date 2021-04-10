@@ -39,11 +39,9 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public Optional<Order> findById(Long id) {
-		Optional<Order> orderOptional = repository.findById(id);
-		if (!orderOptional.isPresent()) {
-			return Optional.empty();
-		}
-		return orderOptional;
+		return repository.findById(id).isPresent()
+		? repository.findById(id)
+		: Optional.empty();
 	}
 
 	@Override

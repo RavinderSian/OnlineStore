@@ -37,12 +37,9 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public Optional<Category> findById(Long id) {
-		Optional<Category> categoryOptional = repository.findById(id);
-		if (!categoryOptional.isPresent()) {
-			return Optional.empty();
-		}
-		
-		return categoryOptional;
+		return repository.findById(id).isPresent()
+		? repository.findById(id)
+		: Optional.empty();
 	}
 
 	@Override

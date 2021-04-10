@@ -52,7 +52,6 @@ class ProductServiceImplTest {
 	public void test_FieldValidation_GivesOneViolation_WhenGivenProductWithNoName() {
 		Product product = new Product();
 		assertEquals(1, validator.validate(product).size());
-
 	}
 	
 	@Test
@@ -67,10 +66,8 @@ class ProductServiceImplTest {
 	public void test_Save_ReturnsCorrectProduct_WhenGivenProductMock() {
 		//Arrange
 		when(mockRepository.save(mockProduct)).thenReturn(mockProduct);
-		//Act
-		Product savedProduct = productService.save(mockProduct);
 		//Assert
-		assertEquals(savedProduct, mockProduct);
+		assertEquals(productService.save(mockProduct), mockProduct);
 	}
 	
 	@Test
@@ -120,21 +117,15 @@ class ProductServiceImplTest {
 	public void test_FindById_ReturnsCorrectProductOptional_WhenCalledWithId1() {
 		//Arrange
 		when(mockRepository.findById(1L)).thenReturn(Optional.of(mockProduct));
-		//Act
-		Optional<Product> productOptional = productService.findById(1L);
 		//Assert
-		assertEquals(productOptional, Optional.of(mockProduct));
+		assertEquals(productService.findById(1L), Optional.of(mockProduct));
 	}
 	
 	@Test
 	public void test_FindById_ReturnsEmptyOptional_WhenCalledWithId10() {
-		//Act
-		Optional<Product> productOptional = productService.findById(10L);
 		//Assert
-		assertEquals(productOptional, Optional.empty());
+		assertEquals(productService.findById(10L), Optional.empty());
 	}
-	
-	
 	
 	@Test
 	public void test_UpdateName_ReturnsProductWithNameTest_WhenGivenProductWithNameTest() {

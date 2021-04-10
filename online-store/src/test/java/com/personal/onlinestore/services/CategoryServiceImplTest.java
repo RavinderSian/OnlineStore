@@ -73,10 +73,8 @@ class CategoryServiceImplTest {
 	public void test_Save_ReturnsCorrectCategory_WhenGivenCategoryMock() {
 		//Arrange
 		when(mockRepository.save(mockCategory)).thenReturn(mockCategory);
-		//Act
-		Category savedCategory = categoryService.save(mockCategory);
 		//Assert
-		assertEquals(savedCategory, mockCategory);
+		assertEquals(categoryService.save(mockCategory), mockCategory);
 	}
 	
 	@Test
@@ -114,18 +112,14 @@ class CategoryServiceImplTest {
 	public void test_FindById_ReturnsCorrectCategoryOptional_WhenCalledWithId1() {
 		//Arrange
 		when(mockRepository.findById(1L)).thenReturn(Optional.of(mockCategory));
-		//Act
-		Optional<Category> categoryOptional = categoryService.findById(1L);
 		//Assert
-		assertEquals(categoryOptional, Optional.of(mockCategory));
+		assertEquals(categoryService.findById(1L), Optional.of(mockCategory));
 	}
 	
 	@Test
 	public void test_FindById_ReturnsEmptyOptional_WhenCalledWithId10() {
-		//Act
-		Optional<Category> categoryOptional = categoryService.findById(10L);
 		//Assert
-		assertEquals(categoryOptional, Optional.empty());
+		assertEquals(categoryService.findById(10L), Optional.empty());
 	}
 	
 	@Test
@@ -153,20 +147,16 @@ class CategoryServiceImplTest {
 		products.add(product2);
 		
 		when(productRepositoryMock.findProductsByCategory_CategoryId(1L)).thenReturn(products);
-		//Act
-		List<Product> productsForOrder = categoryService.findProductsByCategoryId(1L);
 		//Assert
-		assertEquals(product, productsForOrder.get(0));
-		assertEquals(product2, productsForOrder.get(1));
-		assertEquals(2, productsForOrder.size());
+		assertEquals(product, categoryService.findProductsByCategoryId(1L).get(0));
+		assertEquals(product2, categoryService.findProductsByCategoryId(1L).get(1));
+		assertEquals(2, categoryService.findProductsByCategoryId(1L).size());
 	}
 	
 	@Test
 	public void test_FindProductsByCategoryId_ReturnsEmptyList_WhenCalledWithId10() {
-		//Act
-		List<Product> productsForOrder = categoryService.findProductsByCategoryId(1L);
 		//Assert
-		assertEquals(0, productsForOrder.size());
+		assertEquals(0, categoryService.findProductsByCategoryId(1L).size());
 	}
 
 }
