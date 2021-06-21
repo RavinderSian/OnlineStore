@@ -15,7 +15,8 @@ All of the model classes have the same general format of requests (CRUD)
 The GET Customer request returns a CustomerDTO object as opposed to a Customer object, this hides information such as credit card number. This was done using ModelMapper in the service layer:
 ![](https://github.com/RavinderSian/OnlineStore/blob/main/online-store/screenshots/Customer%20Mapping.JPG)
 
-GET CustomerById request: 
+GET CustomerById request:
+
 ![](https://github.com/RavinderSian/OnlineStore/blob/main/online-store/screenshots/Get%20Customer.JPG)
 
 The find customer by id request also has error handling if the customer does not exist, this gives a status 404 response: 
