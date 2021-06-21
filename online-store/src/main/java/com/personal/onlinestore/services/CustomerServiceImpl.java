@@ -44,7 +44,6 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public CustomerDTO updateCustomerByCustomer(Long id, Customer customer) {
-		
 		customer.setCustomerId(id);
 		return mapper.map(repository.save(customer), CustomerDTO.class);
 	}
