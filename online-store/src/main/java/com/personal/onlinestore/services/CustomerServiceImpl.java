@@ -17,12 +17,12 @@ public class CustomerServiceImpl implements CustomerService {
 	
 	private final CustomerRepository repository;
 	private final OrderRepository orderRepository;
-	
-	private ModelMapper mapper = new ModelMapper();
+	private final ModelMapper mapper;
 
-	public CustomerServiceImpl(CustomerRepository repository, OrderRepository orderRepository) {
+	public CustomerServiceImpl(final CustomerRepository repository, final OrderRepository orderRepository) {
 		this.repository = repository;
 		this.orderRepository = orderRepository;
+		this.mapper = new ModelMapper();
 	}
 
 	@Override

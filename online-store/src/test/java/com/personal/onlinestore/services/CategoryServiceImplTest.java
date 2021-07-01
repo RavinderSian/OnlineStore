@@ -28,16 +28,16 @@ import com.personal.onlinestore.repository.ProductRepository;
 @SpringBootTest
 class CategoryServiceImplTest {
 	
-	CategoryService categoryService;
+	private CategoryService categoryService;
 	
 	@Mock
-	CategoryRepository mockRepository;
+	private CategoryRepository mockRepository;
 	
 	@Mock
-	ProductRepository productRepositoryMock;
+	private ProductRepository productRepositoryMock;
 	
 	@Mock
-	Category mockCategory;
+	private Category mockCategory;
 	
 	private Validator validator;
 
@@ -49,12 +49,12 @@ class CategoryServiceImplTest {
 	}
 
 	@Test
-	public void test_CategoryService_IsNotNull() {
+	void test_CategoryService_IsNotNull() {
 		assertNotNull(categoryService);
 	}
 	
 	@Test
-	public void test_FieldValidation_GivesOneViolation_WhenGivenCategoryWithNoName() {
+	void test_FieldValidation_GivesOneViolation_WhenGivenCategoryWithNoName() {
 		Category category = new Category();
 		category.setCategoryId(1L);
 		assertEquals(1, validator.validate(category).size());
@@ -62,7 +62,7 @@ class CategoryServiceImplTest {
 	}
 	
 	@Test
-	public void test_Save_CallsRepositorySave_WhenCalled() {
+	void test_Save_CallsRepositorySave_WhenCalled() {
 		//Act
 		categoryService.save(mockCategory);
 		//Assert
@@ -70,7 +70,7 @@ class CategoryServiceImplTest {
 	}
 	
 	@Test
-	public void test_Save_ReturnsCorrectCategory_WhenGivenCategoryMock() {
+	void test_Save_ReturnsCorrectCategory_WhenGivenCategoryMock() {
 		//Arrange
 		when(mockRepository.save(mockCategory)).thenReturn(mockCategory);
 		//Assert
@@ -78,7 +78,7 @@ class CategoryServiceImplTest {
 	}
 	
 	@Test
-	public void test_Delete_CallsRepositoryDelete_WhenCalled() {
+	void test_Delete_CallsRepositoryDelete_WhenCalled() {
 		//Act
 		categoryService.delete(mockCategory);
 		//Assert
@@ -86,7 +86,7 @@ class CategoryServiceImplTest {
 	}
 	
 	@Test
-	public void test_CategoryServiceDelete_ClearsBothSidesOfMapping_WhenDeletingCategory() {
+	void test_CategoryServiceDelete_ClearsBothSidesOfMapping_WhenDeletingCategory() {
 		//Arrange
 		Category category = new Category();
 		category.setName("test");
@@ -101,7 +101,7 @@ class CategoryServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindById_CallsRepositoryFindById_WhenCalled() {
+	void test_FindById_CallsRepositoryFindById_WhenCalled() {
 		//Act
 		categoryService.findById(1L);
 		//Assert
@@ -109,7 +109,7 @@ class CategoryServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindById_ReturnsCorrectCategoryOptional_WhenCalledWithId1() {
+	void test_FindById_ReturnsCorrectCategoryOptional_WhenCalledWithId1() {
 		//Arrange
 		when(mockRepository.findById(1L)).thenReturn(Optional.of(mockCategory));
 		//Assert
@@ -117,13 +117,13 @@ class CategoryServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindById_ReturnsEmptyOptional_WhenCalledWithId10() {
+	void test_FindById_ReturnsEmptyOptional_WhenCalledWithId10() {
 		//Assert
 		assertEquals(categoryService.findById(10L), Optional.empty());
 	}
 	
 	@Test
-	public void test_UpdateName_ReturnsCategoryWithNameTest_WhenGivenCategoryWithNameTest() {
+	void test_UpdateName_ReturnsCategoryWithNameTest_WhenGivenCategoryWithNameTest() {
 		//Arrange
 		Category category = new Category();
 		category.setName("testing");
@@ -135,7 +135,7 @@ class CategoryServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindProductsByCategoryId_ReturnsCorrectProducts_WhenCalledWithId1() {
+	void test_FindProductsByCategoryId_ReturnsCorrectProducts_WhenCalledWithId1() {
 		//Arrange
 		Product product = new Product();
 		product.setName("testing order bootstrap");
@@ -154,7 +154,7 @@ class CategoryServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindProductsByCategoryId_ReturnsEmptyList_WhenCalledWithId10() {
+	void test_FindProductsByCategoryId_ReturnsEmptyList_WhenCalledWithId10() {
 		//Assert
 		assertEquals(0, categoryService.findProductsByCategoryId(1L).size());
 	}

@@ -25,16 +25,16 @@ import com.personal.onlinestore.repository.ProductRepository;
 @SpringBootTest
 class OrderServiceImplTest {
 	
-	OrderService orderService;
+	private OrderService orderService;
 	
 	@Mock
-	OrderRepository mockRepository;
+	private OrderRepository mockRepository;
 	
 	@Mock
-	ProductRepository productRepositoryMock;
+	private ProductRepository productRepositoryMock;
 	
 	@Mock
-	Order mockOrder;
+	private Order mockOrder;
 
 	@BeforeEach
 	void setUp() throws Exception {
