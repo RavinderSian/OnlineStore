@@ -44,42 +44,18 @@ class ProductServiceImplTest {
 	}
 
 	@Test
-	public void test_CategoryService_IsNotNull() {
+	void test_CategoryService_IsNotNull() {
 		assertNotNull(productService);
 	}
 	
 	@Test
-	public void test_FieldValidation_GivesOneViolation_WhenGivenProductWithNoName() {
+	void test_FieldValidation_GivesOneViolation_WhenGivenProductWithNoName() {
 		Product product = new Product();
 		assertEquals(1, validator.validate(product).size());
 	}
 	
 	@Test
-	public void test_Save_CallsRepositorySave_WhenCalled() {
-		//Act
-		productService.save(mockProduct);
-		//Assert
-		verify(mockRepository, times(1)).save(mockProduct);
-	}
-	
-	@Test
-	public void test_Save_ReturnsCorrectProduct_WhenGivenProductMock() {
-		//Arrange
-		when(mockRepository.save(mockProduct)).thenReturn(mockProduct);
-		//Assert
-		assertEquals(productService.save(mockProduct), mockProduct);
-	}
-	
-	@Test
-	public void test_Delete_CallsRepositoryDelete_WhenCalled() {
-		//Act
-		productService.delete(mockProduct);
-		//Assert
-		verify(mockRepository, times(1)).delete(mockProduct);
-	}
-	
-	@Test
-	public void test_ProductServiceDelete_SetsOrderToNull_WhenDeletingProduct() {
+	void test_ProductServiceDelete_SetsOrderToNull_WhenDeletingProduct() {
 		//Arrange
 		Order order = new Order();
 		Product product = new Product();
@@ -92,7 +68,7 @@ class ProductServiceImplTest {
 	}
 	
 	@Test
-	public void test_ProductServiceDelete_SetsCategoryToNull_WhenDeletingProduct() {
+	void test_ProductServiceDelete_SetsCategoryToNull_WhenDeletingProduct() {
 		//Arrange
 		Category category = new Category();
 		category.setName("test");
@@ -106,7 +82,7 @@ class ProductServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindById_CallsRepositoryFindById_WhenCalled() {
+	void test_FindById_CallsRepositoryFindById_WhenCalled() {
 		//Act
 		productService.findById(1L);
 		//Assert
@@ -114,7 +90,7 @@ class ProductServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindById_ReturnsCorrectProductOptional_WhenCalledWithId1() {
+	void test_FindById_ReturnsCorrectProductOptional_WhenCalledWithId1() {
 		//Arrange
 		when(mockRepository.findById(1L)).thenReturn(Optional.of(mockProduct));
 		//Assert
@@ -122,13 +98,13 @@ class ProductServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindById_ReturnsEmptyOptional_WhenCalledWithId10() {
+	void test_FindById_ReturnsEmptyOptional_WhenCalledWithId10() {
 		//Assert
 		assertEquals(productService.findById(10L), Optional.empty());
 	}
 	
 	@Test
-	public void test_UpdateName_ReturnsProductWithNameTest_WhenGivenProductWithNameTest() {
+	void test_UpdateName_ReturnsProductWithNameTest_WhenGivenProductWithNameTest() {
 		//Arrange
 		Product product = new Product();
 		product.setName("testing");

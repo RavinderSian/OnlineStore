@@ -50,19 +50,19 @@ class CustomerServiceImplTest {
 	}
 
 	@Test
-	public void test_CustomerService_IsNotNull() {
+	void test_CustomerService_IsNotNull() {
 		assertNotNull(customerService);
 	}
 	
 	@Test
-	public void test_FieldValidation_Gives4Violations_WhenGivenCustomerWithInvalidCardNumberAndAllOtherAttributesEmpty() {
+	void test_FieldValidation_Gives4Violations_WhenGivenCustomerWithInvalidCardNumberAndAllOtherAttributesEmpty() {
 		Customer customer = new Customer();
 		customer.setCardNumber("1");
 		assertEquals(4, validator.validate(customer).size());
 	}
 	
 	@Test
-	public void test_FieldValidation_Gives0Violations_WhenGivenValidCustomer() {
+	void test_FieldValidation_Gives0Violations_WhenGivenValidCustomer() {
 		
 		Customer customer = new Customer();
 		customer.setFirstName("test");
@@ -73,7 +73,7 @@ class CustomerServiceImplTest {
 	}
 	
 	@Test
-	public void test_SaveAndReturnCustomerDTO_CallsRepositorySave_WhenCalled() {
+	void test_SaveAndReturnCustomerDTO_CallsRepositorySave_WhenCalled() {
 		//Arrange		
 		Customer customer = new Customer();
 		customer.setCustomerId(1L);
@@ -90,7 +90,7 @@ class CustomerServiceImplTest {
 	}
 	
 	@Test
-	public void test_SaveAndReturnCustomerDTO_ReturnsCorrectCustomerDTO_WhenGivenValidCustomer() {
+	void test_SaveAndReturnCustomerDTO_ReturnsCorrectCustomerDTO_WhenGivenValidCustomer() {
 		//Arrange
 		Customer customer = new Customer();
 		customer.setCustomerId(1L);
@@ -109,15 +109,7 @@ class CustomerServiceImplTest {
 	}
 	
 	@Test
-	public void test_DeleteById_CallsRepositoryDeleteById_WhenCalled() {
-		//Act
-		customerService.deleteById(1L);
-		//Assert
-		verify(mockRepository, times(1)).deleteById(1L);
-	}
-	
-	@Test
-	public void test_FindById_CallsRepositoryFindById_WhenCalled() {
+	void test_FindById_CallsRepositoryFindById_WhenCalled() {
 		//Act
 		customerService.findById(1L);
 		//Assert
@@ -141,14 +133,14 @@ class CustomerServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindById_ReturnsEmptyOptional_WhenCalledWithId10() {
+	void test_FindById_ReturnsEmptyOptional_WhenCalledWithId10() {
 		//Assert
 		assertEquals(customerService.findById(10L), Optional.empty());
 	}
 	
 	
 	@Test
-	public void test_FindCustomerById_ReturnsCorrectCustomerOptional_WhenCalledWithId1() {
+	void test_FindCustomerById_ReturnsCorrectCustomerOptional_WhenCalledWithId1() {
 		//Arrange
 		Customer customer = new Customer();
 		customer.setCustomerId(1L);
@@ -163,13 +155,13 @@ class CustomerServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindCustomerById_ReturnsEmptyOptional_WhenCalledWithId10() {
+	void test_FindCustomerById_ReturnsEmptyOptional_WhenCalledWithId10() {
 		//Assert
 		assertEquals(customerService.findCustomerById(10L), Optional.empty());
 	}
 	
 	@Test
-	public void test_updateCustomerByCustomer_ReturnsCustomerDTOWithCorrectInfo_WhenGivenCustomerWithCorrectInfoButNoId() {
+	void test_updateCustomerByCustomer_ReturnsCustomerDTOWithCorrectInfo_WhenGivenCustomerWithCorrectInfoButNoId() {
 		//Arrange
 		
 		Customer customer = new Customer();
@@ -200,7 +192,7 @@ class CustomerServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindOrdersByCustomerId_ReturnsCorrectOrders_WhenCalledWithId1() {
+	void test_FindOrdersByCustomerId_ReturnsCorrectOrders_WhenCalledWithId1() {
 		//Arrange
 		Customer customer = new Customer();
 		customer.setFirstName("test");
@@ -225,7 +217,7 @@ class CustomerServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindOrdersByCustomerId_ReturnsEmptyList_WhenCalledWithId10() {
+	void test_FindOrdersByCustomerId_ReturnsEmptyList_WhenCalledWithId10() {
 		//Assert
 		assertEquals(0, customerService.findOrdersByCustomerId(1L).size());
 	}

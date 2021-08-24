@@ -42,36 +42,12 @@ class OrderServiceImplTest {
 	}
 
 	@Test
-	public void test_CustomerService_IsNotNull() {
+	void test_CustomerService_IsNotNull() {
 		assertNotNull(orderService);
 	}
 	
 	@Test
-	public void test_Save_CallsRepositorySave_WhenCalled() {
-		//Act
-		orderService.save(mockOrder);
-		//Assert
-		verify(mockRepository, times(1)).save(mockOrder);
-	}
-	
-	@Test
-	public void test_Save_ReturnsCorrectOrder_WhenGivenOrderMock() {
-		//Arrange
-		when(mockRepository.save(mockOrder)).thenReturn(mockOrder);
-		//Assert
-		assertEquals(orderService.save(mockOrder), mockOrder);
-	}
-	
-	@Test
-	public void test_Delete_CallsRepositoryDelete_WhenCalled() {
-		//Act
-		orderService.delete(mockOrder);
-		//Assert
-		verify(mockRepository, times(1)).delete(mockOrder);
-	}
-	
-	@Test
-	public void test_OrderServiceDelete_ClearsBothSidesOfOrderCustomerMapping_WhenDeletingOrder() {
+	void test_OrderServiceDelete_ClearsBothSidesOfOrderCustomerMapping_WhenDeletingOrder() {
 		//Arrange
 		Order order = new Order();
 		Customer customer = new Customer();
@@ -84,7 +60,7 @@ class OrderServiceImplTest {
 	}
 	
 	@Test
-	public void test_OrderServiceDelete_ClearsBothSidesOfProductOrderMapping_WhenDeletingOrder() {
+	void test_OrderServiceDelete_ClearsBothSidesOfProductOrderMapping_WhenDeletingOrder() {
 		//Arrange
 		Order order = new Order();
 		Product product = new Product();
@@ -98,7 +74,7 @@ class OrderServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindById_CallsRepositoryFindById_WhenCalled() {
+	void test_FindById_CallsRepositoryFindById_WhenCalled() {
 		//Act
 		orderService.findById(1L);
 		//Assert
@@ -106,7 +82,7 @@ class OrderServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindById_ReturnsCorrectOrderOptional_WhenCalledWithId1() {
+	void test_FindById_ReturnsCorrectOrderOptional_WhenCalledWithId1() {
 		//Arrange
 		when(mockRepository.findById(1L)).thenReturn(Optional.of(mockOrder));
 		//Assert
@@ -114,13 +90,13 @@ class OrderServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindById_ReturnsEmptyOptional_WhenCalledWithId10() {
+	void test_FindById_ReturnsEmptyOptional_WhenCalledWithId10() {
 		//Assert
 		assertEquals(orderService.findById(10L), Optional.empty());
 	}
 	
 	@Test
-	public void test_FindProductsByOrderId_ReturnsCorrectProducts_WhenCalledWithId1() {
+	void test_FindProductsByOrderId_ReturnsCorrectProducts_WhenCalledWithId1() {
 		//Arrange
 		Product product = new Product();
 		product.setName("testing order bootstrap");
@@ -139,7 +115,7 @@ class OrderServiceImplTest {
 	}
 	
 	@Test
-	public void test_FindProductsByOrderId_ReturnsEmptyList_WhenCalledWithId10() {
+	void test_FindProductsByOrderId_ReturnsEmptyList_WhenCalledWithId10() {
 		//Assert
 		assertEquals(0, orderService.findProductsByOrderId(10L).size());
 	}
