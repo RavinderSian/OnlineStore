@@ -10,7 +10,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -28,8 +30,9 @@ public class Category {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long categoryId;
 	
-	@NotEmpty(message = "Please enter a valid category name")
+	@NotBlank(message = "Please enter a valid category name")
 	@Column(name = "category_name")
+	@Pattern(regexp = "^[a-zA-Z\\s]+$")
 	private String name;
 	
 	@JsonIgnore 
