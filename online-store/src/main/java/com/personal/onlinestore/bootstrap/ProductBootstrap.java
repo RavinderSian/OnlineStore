@@ -31,7 +31,7 @@ public class ProductBootstrap implements CommandLineRunner{
 		repository.save(product);
 		
 		Category category = new Category();
-		category.setName(" ");
+		category.setName("test category");
 		categoryRepository.save(category);
 
 		category.addProduct(product);
