@@ -29,17 +29,17 @@ public class ProductController implements CrudController<Product, Long>{
 	@Override
 	public ResponseEntity<?> getById(Long id) {
 		return productService.findById(id).isPresent()
-		? new ResponseEntity<Product>(productService.findById(id).get(), HttpStatus.OK)
-		: new ResponseEntity<String>("Product not found", HttpStatus.NOT_FOUND);
+		? new ResponseEntity<>(productService.findById(id).get(), HttpStatus.OK)
+		: new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);
 	}
 
 	@Override
 	public ResponseEntity<String> deleteById(Long id) {
 		if (productService.findById(id).isPresent()) {
 			productService.delete(productService.findById(id).get());
-			return new ResponseEntity<String>("Product with id " + id + " deleted", HttpStatus.OK);
+			return new ResponseEntity<>("Product with id " + id + " deleted", HttpStatus.OK);
 		}
-		return new ResponseEntity<String>("Product not found", HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);
 	}
 
 	@Override
@@ -48,24 +48,29 @@ public class ProductController implements CrudController<Product, Long>{
 		if (bindingResult.hasFieldErrors()) {
 			Map<String, String> fieldErrorMap = new HashMap<>();
 			
-			bindingResult.getFieldErrors().forEach(objectError -> {
-				fieldErrorMap.put(objectError.getField(), objectError.getDefaultMessage());
-			});
+			bindingResult.getFieldErrors().forEach(objectError -> 
+				fieldErrorMap.put(objectError.getField(), objectError.getDefaultMessage()));
 			
-			return new ResponseEntity<Map<String, String>>(fieldErrorMap, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(fieldErrorMap, HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<Product>(productService.save(product), HttpStatus.OK);
+		return new ResponseEntity<>(productService.save(product), HttpStatus.OK);
 	}
 	
 	@PatchMapping("/updatename/{id}")
-	public ResponseEntity<?> updateName(@PathVariable Long id, @RequestBody String name){
+	public ResponseEntity<?> updateName(@PathVariable Long id, @RequestBody(required = false) String name){
+		
+		if (name == null || !name.matches("^[a-zA-Z\\s]+$")) {
+			return new ResponseEntity<>("Please enter a valid name", HttpStatus.BAD_REQUEST);
+		}
+		
 		Optional<Product> productOptional = productService.findById(id);
+		
 		if (productOptional.isPresent()) {
 			Product product = productOptional.get();
 			productService.updateName(product, name);
-			return new ResponseEntity<Product>(product, HttpStatus.OK);
+			return new ResponseEntity<>(product, HttpStatus.OK);
 		}
-		return new ResponseEntity<String>("Product not found", HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);
 		
 	}
 	

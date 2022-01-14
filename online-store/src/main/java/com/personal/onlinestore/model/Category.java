@@ -29,8 +29,8 @@ public class Category {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long categoryId;
 	
-	@NotBlank(message = "Please enter a valid category name")
 	@Column(name = "category_name")
+	@NotBlank(message = "Please enter a valid category name")
 	@Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Please enter a valid category name")
 	private String name;
 	
