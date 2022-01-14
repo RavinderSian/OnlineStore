@@ -39,12 +39,12 @@ class ProductControllerTest {
 	ProductService service;
 	
 	@Test
-	public void test_Controller_IsNotNull() {
+	void test_Controller_IsNotNull() {
 		assertNotNull(controller);
 	}
 	
 	@Test
-	public void test_GetById_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
+	void test_GetById_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
 		
 		Product product = new Product();
 		product.setProductId(1L);
@@ -58,7 +58,7 @@ class ProductControllerTest {
 	}
 	
 	@Test
-	public void test_GetById_ReturnsStringProductNotFound_WhenGivenId10() throws Exception {
+	void test_GetById_ReturnsStringProductNotFound_WhenGivenId10() throws Exception {
 		
 		mockMvc.perform(get("/product/10"))
 				.andExpect(status().isNotFound())
@@ -66,7 +66,7 @@ class ProductControllerTest {
 	}
 	
 	@Test
-	public void test_Delete_ReturnsStringProductNotFound_WhenGivenId10() throws Exception {
+	void test_Delete_ReturnsStringProductNotFound_WhenGivenId10() throws Exception {
 		
 		mockMvc.perform(delete("/product/delete/10"))
 				.andExpect(status().isNotFound())
@@ -74,7 +74,7 @@ class ProductControllerTest {
 	}
 	
 	@Test
-	public void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenValidProduct() throws Exception {
+	void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenValidProduct() throws Exception {
 		
 		Product product = new Product();
 		product.setProductId(1L);
@@ -93,11 +93,14 @@ class ProductControllerTest {
 	}
 	
 	@Test
-	public void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenInvalidProduct() throws Exception {
+	void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenEmptyName() throws Exception {
 		
 		Product product = new Product();
 		product.setProductId(1L);
-				
+		product.setName("");
+		
+		when(service.save(product)).thenReturn(product);
+		
 		ObjectMapper mapper = new ObjectMapper();
 	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
 	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
@@ -109,7 +112,69 @@ class ProductControllerTest {
 	}
 	
 	@Test
-	public void test_UpdateName_ReturnsCorrectStatusAndResponse_WhenGivenId1AndNameNewName() throws Exception {
+	void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenNumericName() throws Exception {
+		
+		Product product = new Product();
+		product.setProductId(1L);
+		product.setName("45543");
+		
+		when(service.save(product)).thenReturn(product);
+		
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(product);
+		
+		this.mockMvc.perform(post("/product/save").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().json("{\"name\":\"Please enter a valid product name\"}"));
+	}
+	
+	@Test
+	void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenNameNull() throws Exception {
+		
+		Product product = new Product();
+		product.setProductId(1L);
+		
+		when(service.save(product)).thenReturn(product);
+		
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(product);
+		
+		this.mockMvc.perform(post("/product/save").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().json("{\"name\":\"Please enter a valid product name\"}"));
+	}
+	
+	@Test
+	void test_UpdateName_ReturnsCorrectStatusAndResponse_WhenGivenEmptyName() throws Exception {
+		
+		Product product = new Product();
+		product.setProductId(1L);
+		product.setName("test");
+		when(service.findById(1L)).thenReturn(Optional.of(product));
+		
+		this.mockMvc.perform(patch("/product/updatename/1").contentType(MediaType.APPLICATION_JSON_VALUE).content(""))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("Please enter a valid name"));
+	}
+	
+	@Test
+	void test_UpdateName_ReturnsCorrectStatusAndResponse_WhenGivenNumericName() throws Exception {
+		
+		Product product = new Product();
+		product.setProductId(1L);
+		when(service.findById(1L)).thenReturn(Optional.of(product));
+		
+		this.mockMvc.perform(patch("/product/updatename/1").contentType(MediaType.APPLICATION_JSON_VALUE).content("4534543"))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("Please enter a valid name"));
+	}
+	
+	@Test
+	void test_UpdateName_ReturnsCorrectStatusAndResponse_WhenGivenId1AndNameNewName() throws Exception {
 		
 		Product product = new Product();
 		product.setProductId(1L);
@@ -125,7 +190,7 @@ class ProductControllerTest {
 	}
 	
 	@Test
-	public void test_UpdateName_ReturnsStringProductNotFound_WhenGivenId10() throws Exception {
+	void test_UpdateName_ReturnsStringProductNotFound_WhenGivenId10() throws Exception {
 		
 		this.mockMvc.perform(patch("/product/updatename/10").contentType(MediaType.APPLICATION_JSON_VALUE).content("new name"))
 		.andExpect(status().isNotFound())

@@ -33,7 +33,7 @@ import com.personal.onlinestore.services.ProductService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class CategoryControllerTest {
+class CategoryControllerTest {
 	
 	@Autowired
 	private MockMvc mockMvc;
@@ -48,12 +48,12 @@ public class CategoryControllerTest {
 	ProductService productService;
 	
 	@Test
-	public void test_Controller_IsNotNull() {
+	void test_Controller_IsNotNull() {
 		assertNotNull(controller);
 	}
 	
 	@Test
-	public void test_GetById_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
+	void test_GetById_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
 		
 		Category category = new Category();
 		category.setCategoryId(1L);
@@ -67,7 +67,7 @@ public class CategoryControllerTest {
 	}
 	
 	@Test
-	public void test_GetById_ReturnsStringCategoryNotFound_WhenGivenId10() throws Exception {
+	void test_GetById_ReturnsStringCategoryNotFound_WhenGivenId10() throws Exception {
 		
 		mockMvc.perform(get("/category/10"))
 				.andExpect(status().isNotFound())
@@ -75,7 +75,7 @@ public class CategoryControllerTest {
 	}
 	
 	@Test
-	public void test_Delete_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
+	void test_Delete_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
 		
 		Category category = new Category();
 		category.setCategoryId(1L);
@@ -89,7 +89,7 @@ public class CategoryControllerTest {
 	}
 	
 	@Test
-	public void test_Delete_ReturnsStringCategoryNotFound_WhenGivenId10() throws Exception {
+	void test_Delete_ReturnsStringCategoryNotFound_WhenGivenId10() throws Exception {
 		
 		mockMvc.perform(delete("/category/delete/10"))
 				.andExpect(status().isNotFound())
@@ -97,7 +97,7 @@ public class CategoryControllerTest {
 	}
 	
 	@Test
-	public void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenValidCategory() throws Exception {
+	void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenValidCategory() throws Exception {
 		
 		Category category = new Category();
 		category.setCategoryId(1L);
@@ -116,7 +116,7 @@ public class CategoryControllerTest {
 	}
 	
 	@Test
-	public void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenInvalidCategory() throws Exception {
+	void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenInvalidCategory() throws Exception {
 		
 		Category category = new Category();
 		category.setCategoryId(1L);
@@ -132,7 +132,7 @@ public class CategoryControllerTest {
 	}
 	
 	@Test
-	public void test_UpdateName_ReturnsCorrectStatusAndResponse_WhenGivenId1AndNameNewName() throws Exception {
+	void test_UpdateName_ReturnsCorrectStatusAndResponse_WhenGivenId1AndNameNewName() throws Exception {
 		
 		Category category = new Category();
 		category.setCategoryId(1L);
@@ -148,7 +148,7 @@ public class CategoryControllerTest {
 	}
 	
 	@Test
-	public void test_UpdateName_ReturnsStringCategoryNotFound_WhenGivenId10() throws Exception {
+	void test_UpdateName_ReturnsStringCategoryNotFound_WhenGivenId10() throws Exception {
 		
 		this.mockMvc.perform(patch("/category/updatename/10").contentType(MediaType.APPLICATION_JSON_VALUE).content("new name"))
 		.andExpect(status().isNotFound())
@@ -156,7 +156,23 @@ public class CategoryControllerTest {
 	}
 	
 	@Test
-	public void test_GetProducts_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
+	void test_UpdateName_ReturnsStringEnterAValidName_WhenRequestContainsNumber() throws Exception {
+		
+		this.mockMvc.perform(patch("/category/updatename/10").contentType(MediaType.APPLICATION_JSON_VALUE).content("new n4ame"))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("Please enter a valid name"));
+	}
+	
+	@Test
+	void test_UpdateName_ReturnsStringEnterAValidName_WhenRequestIsEmptyString() throws Exception {
+		
+		this.mockMvc.perform(patch("/category/updatename/10").contentType(MediaType.APPLICATION_JSON_VALUE).content(""))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("Please enter a valid name"));
+	}
+	
+	@Test
+	void test_GetProducts_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
 		
 		Product product = new Product();
 		product.setProductId(1L);
@@ -184,7 +200,7 @@ public class CategoryControllerTest {
 	}
 
 	@Test
-	public void test_GetProducts_ReturnsCorrectStatusAndResponse_WhenGivenId10() throws Exception {
+	void test_GetProducts_ReturnsCorrectStatusAndResponse_WhenGivenId10() throws Exception {
 		
 		mockMvc.perform(get("/category/10/products"))
 				.andExpect(status().isNotFound())
@@ -192,7 +208,7 @@ public class CategoryControllerTest {
 	}
 	
 	@Test
-	public void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenCategoryId10() throws Exception {
+	void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenCategoryId10() throws Exception {
 		
 		mockMvc.perform(get("/category/10/addproduct/1"))
 				.andExpect(status().isNotFound())
@@ -200,7 +216,7 @@ public class CategoryControllerTest {
 	}
 	
 	@Test
-	public void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenProductId10() throws Exception {
+	void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenProductId10() throws Exception {
 		
 		Category category = new Category();
 		category.setCategoryId(1L);
@@ -214,7 +230,7 @@ public class CategoryControllerTest {
 	}
 	
 	@Test
-	public void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenValidCategoryAndProductIds() throws Exception {
+	void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenValidCategoryAndProductIds() throws Exception {
 		
 		Category category = new Category();
 		category.setCategoryId(1L);

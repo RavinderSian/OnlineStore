@@ -49,12 +49,12 @@ class CustomerControllerTest {
 	OrderService orderService;
 	
 	@Test
-	public void test_Controller_IsNotNull() {
+	void test_Controller_IsNotNull() {
 		assertNotNull(controller);
 	}
 	
 	@Test
-	public void test_GetById_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
+	void test_GetById_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
 		
 		Customer customer = new Customer();
 		customer.setCustomerId(1L);
@@ -74,7 +74,7 @@ class CustomerControllerTest {
 	}
 	
 	@Test
-	public void test_GetById_ReturnsStringCustomerNotFound_WhenGivenId10() throws Exception {
+	void test_GetById_ReturnsStringCustomerNotFound_WhenGivenId10() throws Exception {
 		
 		mockMvc.perform(get("/customer/10"))
 				.andExpect(status().isNotFound())
@@ -82,7 +82,7 @@ class CustomerControllerTest {
 	}
 	
 	@Test
-	public void test_Delete_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
+	void test_Delete_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
 		
 		Customer customer = new Customer();
 		customer.setCustomerId(1L);
@@ -102,7 +102,7 @@ class CustomerControllerTest {
 	}
 	
 	@Test
-	public void test_Delete_ReturnsStringCustomerNotFound_WhenGivenId10() throws Exception {
+	void test_Delete_ReturnsStringCustomerNotFound_WhenGivenId10() throws Exception {
 		
 		mockMvc.perform(delete("/customer/delete/10"))
 				.andExpect(status().isNotFound())
@@ -110,7 +110,7 @@ class CustomerControllerTest {
 	}
 	
 	@Test
-	public void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenValidCustomer() throws Exception {
+	void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenValidCustomer() throws Exception {
 		
 		Customer customer = new Customer();
 		customer.setCustomerId(1L);
@@ -137,7 +137,7 @@ class CustomerControllerTest {
 	}
 	
 	@Test
-	public void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenInvalidCustomer() throws Exception {
+	void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenNullLastName() throws Exception {
 		
 		Customer customer = new Customer();
 		customer.setCustomerId(1L);
@@ -156,7 +156,107 @@ class CustomerControllerTest {
 	}
 	
 	@Test
-	public void test_Update_ReturnsCorrectStatusAndResponse_WhenGivenValidCustomer() throws Exception {
+	void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenEmptyLastName() throws Exception {
+		
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("test");
+		customer.setLastName("");
+		customer.setPostCode("UB1 1EP");
+		customer.setCardNumber("348768968933971");
+				
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(customer);
+		
+		this.mockMvc.perform(post("/customer/save").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("{\"lastName\":\"Please enter a valid last name\"}"));
+	}
+	
+	@Test
+	void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenNumericLastName() throws Exception {
+		
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("test");
+		customer.setLastName("4534");
+		customer.setPostCode("UB1 1EP");
+		customer.setCardNumber("348768968933971");
+				
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(customer);
+		
+		this.mockMvc.perform(post("/customer/save").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("{\"lastName\":\"Please enter a valid last name\"}"));
+	}
+	
+	
+	@Test
+	void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenEmptyFirstName() throws Exception {
+		
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("");
+		customer.setLastName("test");
+		customer.setPostCode("UB1 1EP");
+		customer.setCardNumber("348768968933971");
+				
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(customer);
+		
+		this.mockMvc.perform(post("/customer/save").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("{\"firstName\":\"Please enter a valid first name\"}"));
+	}
+	
+	@Test
+	void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenEmptyNullFirstName() throws Exception {
+		
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setLastName("test");
+		customer.setPostCode("UB1 1EP");
+		customer.setCardNumber("348768968933971");
+				
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(customer);
+		
+		this.mockMvc.perform(post("/customer/save").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("{\"firstName\":\"Please enter a valid first name\"}"));
+	}
+	
+	@Test
+	void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenNumericFirstName() throws Exception {
+		
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("45443");
+		customer.setLastName("test");
+		customer.setPostCode("UB1 1EP");
+		customer.setCardNumber("348768968933971");
+				
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(customer);
+		
+		this.mockMvc.perform(post("/customer/save").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("{\"firstName\":\"Please enter a valid first name\"}"));
+	}
+	
+	@Test
+	void test_Update_ReturnsCorrectStatusAndResponse_WhenGivenValidCustomer() throws Exception {
 		
 		Customer customer = new Customer();
 		customer.setCustomerId(1L);
@@ -183,7 +283,7 @@ class CustomerControllerTest {
 	}
 	
 	@Test
-	public void test_Update_ReturnsCorrectStatusAndResponse_WhenGivenInvalidCustomer() throws Exception {
+	void test_Update_ReturnsCorrectStatusAndResponse_WhenGivenInvalidCustomer() throws Exception {
 		
 		Customer customer = new Customer();
 		customer.setCustomerId(1L);
@@ -200,9 +300,129 @@ class CustomerControllerTest {
 		.andExpect(status().isBadRequest())
 		.andExpect(content().string("{\"lastName\":\"Please enter a valid last name\"}"));
 	}
+	
+	@Test
+	void test_Update_ReturnsCorrectStatusAndResponse_WhenGivenNullLastName() throws Exception {
+		
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("test");
+		customer.setPostCode("UB1 1EP");
+		customer.setCardNumber("348768968933971");
+				
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(customer);
+	    
+		
+		this.mockMvc.perform(put("/customer/1/update").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("{\"lastName\":\"Please enter a valid last name\"}"));
+	}
+	
+	@Test
+	void test_Update_ReturnsCorrectStatusAndResponse_WhenGivenEmptyLastName() throws Exception {
+		
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("test");
+		customer.setLastName("");
+		customer.setPostCode("UB1 1EP");
+		customer.setCardNumber("348768968933971");
+				
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(customer);
+		
+		this.mockMvc.perform(put("/customer/1/update").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("{\"lastName\":\"Please enter a valid last name\"}"));
+	}
+	
+	@Test
+	void test_Update_ReturnsCorrectStatusAndResponse_WhenGivenNumericLastName() throws Exception {
+		
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("test");
+		customer.setLastName("4534");
+		customer.setPostCode("UB1 1EP");
+		customer.setCardNumber("348768968933971");
+				
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(customer);
+		
+		this.mockMvc.perform(put("/customer/1/update").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("{\"lastName\":\"Please enter a valid last name\"}"));
+	}
+	
+	
+	@Test
+	void test_Update_ReturnsCorrectStatusAndResponse_WhenGivenEmptyFirstName() throws Exception {
+		
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("");
+		customer.setLastName("test");
+		customer.setPostCode("UB1 1EP");
+		customer.setCardNumber("348768968933971");
+				
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(customer);
+		
+		this.mockMvc.perform(put("/customer/1/update").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("{\"firstName\":\"Please enter a valid first name\"}"));
+	}
+	
+	@Test
+	void test_Update_ReturnsCorrectStatusAndResponse_WhenGivenEmptyNullFirstName() throws Exception {
+		
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setLastName("test");
+		customer.setPostCode("UB1 1EP");
+		customer.setCardNumber("348768968933971");
+				
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(customer);
+		
+		this.mockMvc.perform(put("/customer/1/update").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("{\"firstName\":\"Please enter a valid first name\"}"));
+	}
+	
+	@Test
+	void test_Update_ReturnsCorrectStatusAndResponse_WhenGivenNumericFirstName() throws Exception {
+		
+		Customer customer = new Customer();
+		customer.setCustomerId(1L);
+		customer.setFirstName("45443");
+		customer.setLastName("test");
+		customer.setPostCode("UB1 1EP");
+		customer.setCardNumber("348768968933971");
+				
+		ObjectMapper mapper = new ObjectMapper();
+	    mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+	    ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+	    String requestJson = ow.writeValueAsString(customer);
+		
+		this.mockMvc.perform(put("/customer/1/update").contentType(MediaType.APPLICATION_JSON_VALUE).content(requestJson))
+		.andExpect(status().isBadRequest())
+		.andExpect(content().string("{\"firstName\":\"Please enter a valid first name\"}"));
+	}
 
 	@Test
-	public void test_GetOrders_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
+	void test_GetOrders_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
 		
 		Customer customer = new Customer();
 		customer.setFirstName("test");
@@ -232,7 +452,7 @@ class CustomerControllerTest {
 	}
 
 	@Test
-	public void test_GetOrders_ReturnsCorrectStatusAndResponse_WhenGivenId10() throws Exception {
+	void test_GetOrders_ReturnsCorrectStatusAndResponse_WhenGivenId10() throws Exception {
 		
 		mockMvc.perform(get("/customer/10/orders"))
 				.andExpect(status().isNotFound())
@@ -240,7 +460,7 @@ class CustomerControllerTest {
 	}
 	
 	@Test
-	public void test_AddOrder_ReturnsCorrectStatusAndResponse_WhenGivenCustomerId10() throws Exception {
+	void test_AddOrder_ReturnsCorrectStatusAndResponse_WhenGivenCustomerId10() throws Exception {
 		
 		mockMvc.perform(get("/customer/10/addorder/1"))
 				.andExpect(status().isNotFound())
@@ -248,7 +468,7 @@ class CustomerControllerTest {
 	}
 	
 	@Test
-	public void test_AddOrder_ReturnsCorrectStatusAndResponse_WhenGivenOrderId10() throws Exception {
+	void test_AddOrder_ReturnsCorrectStatusAndResponse_WhenGivenOrderId10() throws Exception {
 		
 		Customer customer = new Customer();
 		customer.setCustomerId(1L);
@@ -265,7 +485,7 @@ class CustomerControllerTest {
 	}
 	
 	@Test
-	public void test_AddOrder_ReturnsCorrectStatusAndResponse_WhenGivenValidCustomerAndOrderIds() throws Exception {
+	void test_AddOrder_ReturnsCorrectStatusAndResponse_WhenGivenValidCustomerAndOrderIds() throws Exception {
 		
 		Customer customer = new Customer();
 		customer.setCustomerId(1L);

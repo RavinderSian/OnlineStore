@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -26,6 +27,7 @@ public class Product {
 	private Long productId;
 	
 	@NotEmpty(message = "Please enter a valid product name")
+	@Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Please enter a valid product name")
 	@Column(name = "product_name")
 	private String name;
 	
