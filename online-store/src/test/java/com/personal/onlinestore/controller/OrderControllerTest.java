@@ -32,7 +32,7 @@ import com.personal.onlinestore.services.ProductService;
 
 @AutoConfigureMockMvc
 @SpringBootTest
-public class OrderControllerTest {
+class OrderControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -47,12 +47,12 @@ public class OrderControllerTest {
 	ProductService productService;
 	
 	@Test
-	public void test_Controller_IsNotNull() {
+	void test_Controller_IsNotNull() {
 		assertNotNull(controller);
 	}
 	
 	@Test
-	public void test_GetById_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
+	void test_GetById_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
 		
 		Order order = new Order();
 		order.setOrderId(1L);
@@ -65,15 +65,14 @@ public class OrderControllerTest {
 	}
 	
 	@Test
-	public void test_GetById_ReturnsStringOrderNotFound_WhenGivenId10() throws Exception {
+	void test_GetById_ReturnsStringOrderNotFound_WhenGivenId10() throws Exception {
 		
 		mockMvc.perform(get("/order/10"))
-				.andExpect(status().isNotFound())
-				.andExpect(content().string("Order not found"));
+				.andExpect(status().isNotFound());;
 	}
 	
 	@Test
-	public void test_delete_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
+	void test_delete_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
 		
 		Order order = new Order();
 		order.setOrderId(1L);
@@ -81,20 +80,18 @@ public class OrderControllerTest {
 		when(service.findById(1L)).thenReturn(Optional.of(order));
 		
 		mockMvc.perform(delete("/order/delete/1"))
-				.andExpect(status().isOk())
-				.andExpect(content().string("Order with id 1 deleted"));
+				.andExpect(status().isOk());
 	}
 	
 	@Test
-	public void test_delete_ReturnsStringOrderNotFound_WhenGivenId10() throws Exception {
+	void test_delete_ReturnsStringOrderNotFound_WhenGivenId10() throws Exception {
 		
 		mockMvc.perform(delete("/order/delete/10"))
-				.andExpect(status().isNotFound())
-				.andExpect(content().string("Order not found"));
+				.andExpect(status().isNotFound());
 	}
 	
 	@Test
-	public void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenValidCategory() throws Exception {
+	void test_Save_ReturnsCorrectStatusAndResponse_WhenGivenValidCategory() throws Exception {
 		
 		Order order = new Order();
 		order.setOrderId(1L);
@@ -112,7 +109,7 @@ public class OrderControllerTest {
 	}
 	
 	@Test
-	public void test_GetProducts_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
+	void test_GetProducts_ReturnsCorrectStatusAndResponse_WhenGivenId1() throws Exception {
 
 		Product product = new Product();
 		product.setProductId(1L);
@@ -140,23 +137,21 @@ public class OrderControllerTest {
 	}
 
 	@Test
-	public void test_GetProducts_ReturnsCorrectStatusAndResponse_WhenGivenId10() throws Exception {
+	void test_GetProducts_ReturnsCorrectStatusAndResponse_WhenGivenId10() throws Exception {
 		
 		mockMvc.perform(get("/order/10/products"))
-				.andExpect(status().isNotFound())
-				.andExpect(content().string("Order not found"));
+				.andExpect(status().isNotFound());
 	}
 	
 	@Test
-	public void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenOrderId10() throws Exception {
+	void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenOrderId10() throws Exception {
 		
 		mockMvc.perform(get("/order/10/addproduct/1"))
-				.andExpect(status().isNotFound())
-				.andExpect(content().string("Order not found"));
+				.andExpect(status().isNotFound());
 	}
 	
 	@Test
-	public void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenProductId10() throws Exception {
+	void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenProductId10() throws Exception {
 		
 		Order order = new Order();
 		order.setOrderId(1L);
@@ -164,12 +159,11 @@ public class OrderControllerTest {
 		when(service.findById(1L)).thenReturn(Optional.of(order));
 		
 		mockMvc.perform(get("/order/1/addproduct/10"))
-				.andExpect(status().isNotFound())
-				.andExpect(content().string("Product not found"));
+				.andExpect(status().isNotFound());
 	}
 	
 	@Test
-	public void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenValidOrderAndProductIds() throws Exception {
+	void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenValidOrderAndProductIds() throws Exception {
 		
 		Order order = new Order();
 		order.setOrderId(1L);
@@ -181,8 +175,7 @@ public class OrderControllerTest {
 		when(productService.findById(1L)).thenReturn(Optional.of(product));
 		
 		mockMvc.perform(get("/order/1/addproduct/1"))
-				.andExpect(status().isOk())
-				.andExpect(content().string("Product with id 1 added to Order with id 1"));
+				.andExpect(status().isOk());
 	}
 
 }

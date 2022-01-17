@@ -30,16 +30,16 @@ public class ProductController implements CrudController<Product, Long>{
 	public ResponseEntity<?> getById(Long id) {
 		return productService.findById(id).isPresent()
 		? new ResponseEntity<>(productService.findById(id).get(), HttpStatus.OK)
-		: new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);
+		: new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
 	@Override
 	public ResponseEntity<String> deleteById(Long id) {
 		if (productService.findById(id).isPresent()) {
 			productService.delete(productService.findById(id).get());
-			return new ResponseEntity<>("Product with id " + id + " deleted", HttpStatus.OK);
+			return new ResponseEntity<>(HttpStatus.OK);
 		}
-		return new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class ProductController implements CrudController<Product, Long>{
 			productService.updateName(product, name);
 			return new ResponseEntity<>(product, HttpStatus.OK);
 		}
-		return new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		
 	}
 	

@@ -61,16 +61,14 @@ class ProductControllerTest {
 	void test_GetById_ReturnsStringProductNotFound_WhenGivenId10() throws Exception {
 		
 		mockMvc.perform(get("/product/10"))
-				.andExpect(status().isNotFound())
-				.andExpect(content().string("Product not found"));
+				.andExpect(status().isNotFound());
 	}
 	
 	@Test
 	void test_Delete_ReturnsStringProductNotFound_WhenGivenId10() throws Exception {
 		
 		mockMvc.perform(delete("/product/delete/10"))
-				.andExpect(status().isNotFound())
-				.andExpect(content().string("Product not found"));
+				.andExpect(status().isNotFound());
 	}
 	
 	@Test
@@ -193,8 +191,7 @@ class ProductControllerTest {
 	void test_UpdateName_ReturnsStringProductNotFound_WhenGivenId10() throws Exception {
 		
 		this.mockMvc.perform(patch("/product/updatename/10").contentType(MediaType.APPLICATION_JSON_VALUE).content("new name"))
-		.andExpect(status().isNotFound())
-		.andExpect(content().string("Product not found"));
+		.andExpect(status().isNotFound());
 	}
 	
 }

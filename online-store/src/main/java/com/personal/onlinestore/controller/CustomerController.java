@@ -36,16 +36,16 @@ public class CustomerController implements CrudController<Customer, Long>{
 	public ResponseEntity<?> getById(Long id) {
 		return customerService.findById(id).isPresent()
 		? new ResponseEntity<>(customerService.findById(id).get(), HttpStatus.OK)
-		: new ResponseEntity<>("Customer not found", HttpStatus.NOT_FOUND);
+		: new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
 	@Override
 	public ResponseEntity<String> deleteById(Long id) {
 		if (customerService.findById(id).isPresent()) {
 			customerService.deleteById(id);
-			return new ResponseEntity<>("Customer with id " + id + " deleted", HttpStatus.OK);
+			return new ResponseEntity<>(HttpStatus.OK);
 		}
-		return new ResponseEntity<>("Customer not found", HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
 	@Override
@@ -83,23 +83,23 @@ public class CustomerController implements CrudController<Customer, Long>{
 		
 		return customerService.findById(id).isPresent()
 		? new ResponseEntity<>(customerService.findOrdersByCustomerId(id), HttpStatus.OK)
-		: new ResponseEntity<>("Customer not found", HttpStatus.NOT_FOUND);
+		: new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 	
 	@GetMapping("/{id}/addorder/{orderId}")
 	public ResponseEntity<?> addProducts(@PathVariable Long id, @PathVariable Long orderId){
 		if (!customerService.findCustomerById(id).isPresent()) {
-			return new ResponseEntity<>("Customer not found", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		
 		if (!orderService.findById(orderId).isPresent()) {
-			return new ResponseEntity<>("Order not found", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		
 		Customer customer = customerService.findCustomerById(id).get();
 		customer.addOrder(orderService.findById(orderId).get());
 		customerService.saveAndReturnCustomerDTO(customer);
-		return new ResponseEntity<>("Order with id " + orderId + " added to Customer with id " + id, HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 }

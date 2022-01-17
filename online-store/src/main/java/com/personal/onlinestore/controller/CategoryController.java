@@ -34,16 +34,16 @@ public class CategoryController implements CrudController<Category, Long> {
 	public ResponseEntity<?> getById(Long id) {
 		return categoryService.findById(id).isPresent()
 		? new ResponseEntity<>(categoryService.findById(id).get(), HttpStatus.OK)
-		: new ResponseEntity<>("Category not found", HttpStatus.NOT_FOUND);
+		: new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 
 	@Override
 	public ResponseEntity<String> deleteById(Long id) {
 		if (!categoryService.findById(id).isPresent()) {
-			return new ResponseEntity<>("Category not found", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		categoryService.delete(categoryService.findById(id).get());
-		return new ResponseEntity<>("Category with id " + id + " deleted", HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class CategoryController implements CrudController<Category, Long> {
 		
 		Optional<Category> categoryOptional = categoryService.findById(id);
 		if (!categoryOptional.isPresent()) {
-			return new ResponseEntity<>("Category not found", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		
 		Category category = categoryOptional.get();
@@ -83,23 +83,23 @@ public class CategoryController implements CrudController<Category, Long> {
 	public ResponseEntity<?> getProducts(@PathVariable Long id){
 		return categoryService.findById(id).isPresent()
 		? new ResponseEntity<>(categoryService.findProductsByCategoryId(id), HttpStatus.OK)
-		: new ResponseEntity<>("Category not found", HttpStatus.NOT_FOUND);
+		: new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 	
 	@GetMapping("/{id}/addproduct/{productId}")
 	public ResponseEntity<?> addProducts(@PathVariable Long id, @PathVariable Long productId){
 		if (!categoryService.findById(id).isPresent()) {
-			return new ResponseEntity<>("Category not found", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		
 		if (!productService.findById(productId).isPresent()) {
-			return new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		Category category = categoryService.findById(id).get();
 		category.addProduct(productService.findById(productId).get());
 		categoryService.save(category);
 		
-		return new ResponseEntity<>("Product with id " + productId + " added to Category with id " + id, HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

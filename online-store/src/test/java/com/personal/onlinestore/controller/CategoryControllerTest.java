@@ -70,8 +70,7 @@ class CategoryControllerTest {
 	void test_GetById_ReturnsStringCategoryNotFound_WhenGivenId10() throws Exception {
 		
 		mockMvc.perform(get("/category/10"))
-				.andExpect(status().isNotFound())
-				.andExpect(content().string("Category not found"));
+				.andExpect(status().isNotFound());
 	}
 	
 	@Test
@@ -84,16 +83,14 @@ class CategoryControllerTest {
 		when(service.findById(1L)).thenReturn(Optional.of(category));
 		
 		mockMvc.perform(delete("/category/delete/1"))
-				.andExpect(status().isOk())
-				.andExpect(content().string("Category with id 1 deleted"));
+				.andExpect(status().isOk());
 	}
 	
 	@Test
 	void test_Delete_ReturnsStringCategoryNotFound_WhenGivenId10() throws Exception {
 		
 		mockMvc.perform(delete("/category/delete/10"))
-				.andExpect(status().isNotFound())
-				.andExpect(content().string("Category not found"));
+				.andExpect(status().isNotFound());
 	}
 	
 	@Test
@@ -151,8 +148,7 @@ class CategoryControllerTest {
 	void test_UpdateName_ReturnsStringCategoryNotFound_WhenGivenId10() throws Exception {
 		
 		this.mockMvc.perform(patch("/category/updatename/10").contentType(MediaType.APPLICATION_JSON_VALUE).content("new name"))
-		.andExpect(status().isNotFound())
-		.andExpect(content().string("Category not found"));
+		.andExpect(status().isNotFound());
 	}
 	
 	@Test
@@ -203,16 +199,14 @@ class CategoryControllerTest {
 	void test_GetProducts_ReturnsCorrectStatusAndResponse_WhenGivenId10() throws Exception {
 		
 		mockMvc.perform(get("/category/10/products"))
-				.andExpect(status().isNotFound())
-				.andExpect(content().string("Category not found"));
+				.andExpect(status().isNotFound());
 	}
 	
 	@Test
 	void test_AddProduct_ReturnsCorrectStatusAndResponse_WhenGivenCategoryId10() throws Exception {
 		
 		mockMvc.perform(get("/category/10/addproduct/1"))
-				.andExpect(status().isNotFound())
-				.andExpect(content().string("Category not found"));
+				.andExpect(status().isNotFound());
 	}
 	
 	@Test
@@ -225,8 +219,7 @@ class CategoryControllerTest {
 		when(service.findById(1L)).thenReturn(Optional.of(category));
 		
 		mockMvc.perform(get("/category/1/addproduct/10"))
-				.andExpect(status().isNotFound())
-				.andExpect(content().string("Product not found"));
+				.andExpect(status().isNotFound());
 	}
 	
 	@Test
@@ -243,8 +236,7 @@ class CategoryControllerTest {
 		when(productService.findById(1L)).thenReturn(Optional.of(product));
 		
 		mockMvc.perform(get("/category/1/addproduct/1"))
-				.andExpect(status().isOk())
-				.andExpect(content().string("Product with id 1 added to Category with id 1"));
+				.andExpect(status().isOk());
 	}
 
 }
